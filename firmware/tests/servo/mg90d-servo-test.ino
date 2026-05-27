@@ -29,7 +29,7 @@ void setup() {
   while (!Serial);
 
   Serial.println("-----------------------------------");
-  Serial.println("   Sesame Motor Tester Interface   ");
+  Serial.println("   Servo Motor Tester Interface    ");
   Serial.println("-----------------------------------");
   Serial.println("Commands:");
   Serial.println("1. id,angle   -> e.g. '0,90'");
@@ -43,6 +43,7 @@ void setup() {
   Serial.println(" µs");
   Serial.println("Status: Motors are currently OFF (Limp).");
 
+  // Reserve all 4 LEDC hardware timers so that the Servo library can guarantee stable microsecond pulses for PWM
   ESP32PWM::allocateTimer(0);
   ESP32PWM::allocateTimer(1);
   ESP32PWM::allocateTimer(2);
@@ -109,12 +110,12 @@ int angleToPulse(int angle) {
 }
 
 void moveMotor(int id, int angle) {
+  // Validate ID
   if (id < 0 || id > 7) {
     Serial.println("Error: Motor ID must be 0-7");
     return;
   }
-
-  // Initialize motor if not already done
+  // Lazy attach motors
   if (!servos[id].attached()) {
     servos[id].setPeriodHertz(50);
     servos[id].attach(servoPins[id], MIN_PULSE, MAX_PULSE);
