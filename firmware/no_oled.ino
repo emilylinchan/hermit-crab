@@ -34,35 +34,32 @@ IPAddress networkIP;
 String deviceHostname = "sesame-robot";
 
 // ======================================================================
-// Servo pin mapping — adjust for your board
+// Servo pin mapping
 // ======================================================================
 Servo servos[8];
 
-// Sesame Distro Board V2 Pinout
-//const int servoPins[8] = {4, 5, 6, 7, 15, 16, 17, 18};
-
-// Sesame Distro Board Pinout
-//const int servoPins[8] = {15, 2, 23, 19, 4, 16, 17, 18};
-
-// Lolin S2 Mini Pinout
+// ESP32 GPIO pins
 const int servoPins[8] = {13, 14, 15, 16, 17, 18, 19, 21};
 
 // Subtrim values for each servo (offset in degrees)
 int8_t servoSubtrim[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 
-// ======================================================================
-// 270-degree servo calibration
-// Full 270° range: 500–2500 µs
-// We use only the centre 180° of that sweep
-// Trim = (2000 / 6) ≈ 333 µs per side
-// ======================================================================
+// Full range: 500–2500 µs = 2000 µs span for 270°
+//
+// To use only the center 180°:
+// remove 45° from each end
+//
+// 45° / 270° * 2000 µs ≈ 333 µs
+//
+// Result:
+// 833–2167 µs usable range
 const int SERVO_MIN_US = 833;   // 500  + 333
 const int SERVO_MAX_US = 2167;  // 2500 - 333
 
 // Animation / movement constants
 int frameDelay  = 100;
 int walkCycles  = 10;
-int motorCurrentDelay = 20;
+int motorCurrentDelay = 5;
 
 // Stub face/idle functions required by movement-sequences.h
 // (no display connected — these do nothing)

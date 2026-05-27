@@ -11,27 +11,21 @@ Servo servos[8];
 // Index: 0  1  2  3  4   5   6   7
 const int servoPins[8] = {13, 14, 15, 16, 17, 18, 19, 21};
 
-// ---- 270° Servo Pulse Range ----
-// These define the FULL 270° travel of your servo.
-// Adjust if your servo's datasheet specifies different values.
-const int PULSE_270_MIN = 500;
-const int PULSE_270_MAX = 2500;
+// ---- MG90D 270° SERVO CALIBRATION ----
+// Full travel: 500–2500 µs  → 2000 µs span for 270°
+// Using only the center 180° → trim 45° from each end
+// Trim per side: (45° / 270°) * 2000 µs ≈ 333 µs
+// Final usable pulse range: 833–2167 µs
 
-// ---- Mapped 180° Pulse Range ----
-// We use only the CENTER 180° of the 270° sweep.
-// Formula: total range * (180/270) = total range * (2/3)
-// Each side is trimmed by: total range * (1/6)
-const int TOTAL_PULSE_RANGE = PULSE_270_MAX - PULSE_270_MIN;            // 2000 µs
-const int TRIM             = TOTAL_PULSE_RANGE / 6;                     // ~333 µs
-const int MIN_PULSE        = PULSE_270_MIN + TRIM;                      // ~833 µs
-const int MAX_PULSE        = PULSE_270_MAX - TRIM;                      // ~2167 µs
+const int MIN_PULSE = 833;   // 500  + 333
+const int MAX_PULSE = 2167;  // 2500 - 333
 
 // ======================================================================
 // --- SETUP ---
 // ======================================================================
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(115200); // Ensure the baud rate matches in the serial terminal
   while (!Serial);
 
   Serial.println("-----------------------------------");
@@ -71,28 +65,35 @@ void loop() {
       return;
     }
 
+    // Parse input
     int commaIndex = input.indexOf(',');
-    
     if (commaIndex != -1) {
       String cmd    = input.substring(0, commaIndex);
       String valStr = input.substring(commaIndex + 1);
       int angle     = valStr.toInt();
 
+      // Limit servo angle range to just 0-180°
       if (angle < 0)   angle = 0;
       if (angle > 180) angle = 180;
 
       if (cmd.equalsIgnoreCase("all")) {
         moveAll(angle);
-      } else {
+      } 
+      else {
         int motorId = cmd.toInt();
+        // Handle ambiguity of String.toInt() in Arduino IDE to distinguish if actually a valid motor command
+        // ***NOTE*** toInt() returns 0 in two different situations:
+        //      1. The string actually contains "0" (a valid motor ID)
+        //      2. The string is non-numeric characters like "abc" (which also returns 0 as a failure/default)
         if (motorId == 0 && cmd.charAt(0) != '0') {
           Serial.println("Error: Invalid Motor ID");
-        } else {
+        } 
+        else {
           moveMotor(motorId, angle);
         }
       }
-      
-    } else {
+    } 
+    else {
       Serial.println("Error: Invalid format. Use 'id,angle', 'all,angle', or 'stop'.");
     }
   }
@@ -102,8 +103,8 @@ void loop() {
 // --- HELPER FUNCTIONS ---
 // ======================================================================
 
-// Maps a 0-180° angle to the correct pulse width for the 270° servo.
 int angleToPulse(int angle) {
+  // Map a 0-180° angle to the correct pulse width for the 270° servo
   return map(angle, 0, 180, MIN_PULSE, MAX_PULSE);
 }
 
@@ -113,14 +114,15 @@ void moveMotor(int id, int angle) {
     return;
   }
 
+  // Initialize motor if not already done
   if (!servos[id].attached()) {
     servos[id].setPeriodHertz(50);
     servos[id].attach(servoPins[id], MIN_PULSE, MAX_PULSE);
   }
 
-  // Use writeMicroseconds() instead of write() for precise pulse control.
-  // write() relies on the library's internal angle-to-pulse mapping which
-  // is calibrated for 180° servos — bypassing it avoids any drift at the endpoints.
+  // writeMicroseconds() is used instead of write() for precise pulse control.
+  // ***NOTE*** write() relies on the library's internal angle-to-pulse mapping which
+  //            is calibrated for 180° servos — bypassing it avoids any drift at the endpoints.
   servos[id].writeMicroseconds(angleToPulse(angle));
   
   Serial.print("OK: Motor ");
