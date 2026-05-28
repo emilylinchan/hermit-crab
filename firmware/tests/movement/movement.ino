@@ -93,7 +93,8 @@ void setup() {
 // Loop
 // ======================================================================
 void loop() {
-
+  
+// State executor
   if (currentCommand != "") {
     String cmd = currentCommand;
     if      (cmd == "forward")  runWalkPose();
@@ -121,7 +122,7 @@ void loop() {
   if (Serial.available()) {
     char c = Serial.read();
 
-    // End of command
+    // Set state if end of command entered
     if (c == '\n' || c == '\r') {
 
       // Reset command buffer
