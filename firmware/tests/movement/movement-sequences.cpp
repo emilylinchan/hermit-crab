@@ -38,19 +38,19 @@ void runStandPose() {
 void runWavePose() { 
   Serial.println("WAVE"); 
   runStandPose(); 
-  delay(200);
+  if (!interruptibleDelay(200)) return;
   setServoAngle(R4, 80); 
   setServoAngle(L3, 180); 
   setServoAngle(L2, 90); 
   setServoAngle(R1, 100); 
-  delay(200);
+  if (!interruptibleDelay(200)) return;
   setServoAngle(L3, 180); 
-  delay(300); 
+  if (!interruptibleDelay(300)) return;
   for (int i = 0; i < 4; i++) { 
     setServoAngle(L3, 180); 
-    delay(300); 
+    if (!interruptibleDelay(300)) return;
     setServoAngle(L3, 100); 
-    delay(300); 
+    if (!interruptibleDelay(300)) return;
   } 
   runStandPose(); 
   if (currentCommand == "wave") currentCommand = "";
@@ -66,18 +66,18 @@ void runDancePose() {
   setServoAngle(R3, 160); 
   setServoAngle(L3, 10); 
   setServoAngle(L4, 10); 
-  delay(300); 
+  if (!interruptibleDelay(300)) return;
   for (int i = 0; i < 5; i++) { 
     setServoAngle(R4, 115); 
     setServoAngle(R3, 115); 
     setServoAngle(L3, 10); 
     setServoAngle(L4, 10); 
-    delay(300); 
+    if (!interruptibleDelay(300)) return;
     setServoAngle(R4, 160); 
     setServoAngle(R3, 160); 
     setServoAngle(L3, 65); 
     setServoAngle(L4, 65); 
-    delay(300); 
+    if (!interruptibleDelay(300)) return;
   } 
   runStandPose(); 
   if (currentCommand == "dance") currentCommand = "";
@@ -91,12 +91,12 @@ void runSwimPose() {
     setServoAngle(R2, 45); 
     setServoAngle(L1, 45); 
     setServoAngle(L2, 135); 
-    delay(400); 
+    if (!interruptibleDelay(400)) return;
     setServoAngle(R1, 90); 
     setServoAngle(R2, 90); 
     setServoAngle(L1, 90); 
     setServoAngle(L2, 90); 
-    delay(400); 
+    if (!interruptibleDelay(400)) return;
   } 
   runStandPose(); 
   if (currentCommand == "swim") currentCommand = "";
@@ -112,7 +112,7 @@ void runPointPose() {
   setServoAngle(L3, 145);
   setServoAngle(R4, 80); 
   setServoAngle(R3, 170); 
-  delay(2000); 
+  if (!interruptibleDelay(2000)) return;
   runStandPose(); 
   if (currentCommand == "point") currentCommand = "";
 }
@@ -120,19 +120,19 @@ void runPointPose() {
 void runPushupPose() {
   Serial.println("PUSHUP");
   runStandPose(); 
-  delay(200);
+  if (!interruptibleDelay(200)) return;
   setServoAngle(L1, 0);
   setServoAngle(R1, 180);
   setServoAngle(L3, 90);
   setServoAngle(R3, 90);
-  delay(500);
+  if (!interruptibleDelay(500)) return;
   for (int i = 0; i < 4; i++) {
     setServoAngle(L3, 0);
     setServoAngle(R3, 180);
-    delay(600);
+    if (!interruptibleDelay(600)) return;
     setServoAngle(L3, 90);
     setServoAngle(R3, 90);
-    delay(500);
+    if (!interruptibleDelay(500)) return;
   }
   runStandPose();
   if (currentCommand == "pushup") currentCommand = "";
@@ -141,7 +141,7 @@ void runPushupPose() {
 void runBowPose() {
   Serial.println("BOW");
   runStandPose(); 
-  delay(200);
+  if (!interruptibleDelay(200)) return;
   setServoAngle(L1, 0);
   setServoAngle(R1, 180);
   setServoAngle(L3, 0);
@@ -150,10 +150,10 @@ void runBowPose() {
   setServoAngle(R2, 0);
   setServoAngle(R4, 0);
   setServoAngle(L4, 180);
-  delay(600);
+  if (!interruptibleDelay(600)) return;
   setServoAngle(L3, 90);
   setServoAngle(R3, 90);
-  delay(3000);
+  if (!interruptibleDelay(3000)) return;
   runStandPose();
   if (currentCommand == "bow") currentCommand = "";
 }
@@ -161,7 +161,7 @@ void runBowPose() {
 void runCutePose() {
   Serial.println(F("CUTE"));
   runStandPose(); 
-  delay(200);
+  if (!interruptibleDelay(200)) return;
   setServoAngle(L2, 160);
   setServoAngle(R2, 20);
   setServoAngle(R4, 180);
@@ -170,14 +170,14 @@ void runCutePose() {
   setServoAngle(R1, 180);
   setServoAngle(L3, 180);
   setServoAngle(R3, 0);
-  delay(200);
+  if (!interruptibleDelay(200)) return;
   for (int i = 0; i < 5; i++) {
     setServoAngle(R4, 180);
     setServoAngle(L4, 45);
-    delay(300);
+    if (!interruptibleDelay(300)) return;
     setServoAngle(R4, 135);
     setServoAngle(L4, 0);
-    delay(300);
+    if (!interruptibleDelay(300)) return;
   }
   runStandPose();
   if (currentCommand == "cute") currentCommand = "";
@@ -186,19 +186,19 @@ void runCutePose() {
 void runFreakyPose() {
   Serial.println("FREAKY");
   runStandPose(); 
-  delay(200);
+  if (!interruptibleDelay(200)) return;
   setServoAngle(L1, 0);
   setServoAngle(R1, 180);
   setServoAngle(L2, 180);
   setServoAngle(R2, 0);
   setServoAngle(R4, 90);
   setServoAngle(R3, 0);
-  delay(200);
+  if (!interruptibleDelay(200)) return;
   for (int i = 0; i < 3; i++) {
     setServoAngle(R3, 25);
-    delay(400);
+    if (!interruptibleDelay(400)) return;
     setServoAngle(R3, 0);
-    delay(400);
+    if (!interruptibleDelay(400)) return;
   }
   runStandPose();
   if (currentCommand == "freaky") currentCommand = "";
@@ -207,7 +207,7 @@ void runFreakyPose() {
 void runWormPose() {
   Serial.println("WORM");
   runStandPose();
-  delay(200);
+  if (!interruptibleDelay(200)) return;
   setServoAngle(R1, 180); 
   setServoAngle(R2, 0); 
   setServoAngle(L1, 0); 
@@ -216,18 +216,18 @@ void runWormPose() {
   setServoAngle(R3, 90); 
   setServoAngle(L3, 90); 
   setServoAngle(L4, 90);
-  delay(200);
+  if (!interruptibleDelay(200)) return;
   for(int i = 0; i < 5; i++) {
     setServoAngle(R3, 45); 
     setServoAngle(L3, 135); 
     setServoAngle(R4, 45); 
     setServoAngle(L4, 135);
-    delay(300);
+    if (!interruptibleDelay(300)) return;
     setServoAngle(R3, 135); 
     setServoAngle(L3, 45); 
     setServoAngle(R4, 135); 
     setServoAngle(L4, 45);
-    delay(300);
+    if (!interruptibleDelay(300)) return;
   }
   runStandPose();
   if (currentCommand == "worm") currentCommand = "";
@@ -236,40 +236,40 @@ void runWormPose() {
 void runShakePose() {
   Serial.println("SHAKE");
   runStandPose();
-  delay(200);
+  if (!interruptibleDelay(200)) return;
   setServoAngle(R1, 135); 
   setServoAngle(L1, 45); 
   setServoAngle(L3, 90); 
   setServoAngle(R3, 90);
   setServoAngle(L2, 90); 
   setServoAngle(R2, 90);
-  delay(200);
+  if (!interruptibleDelay(200)) return;
   for(int i = 0; i < 5; i++) {
     setServoAngle(R4, 45); 
     setServoAngle(L4, 135);
-    delay(300);
+    if (!interruptibleDelay(300)) return;
     setServoAngle(R4, 0); 
     setServoAngle(L4, 180);
-    delay(300);
+    if (!interruptibleDelay(300)) return;
   }
   runStandPose();
   if (currentCommand == "shake") currentCommand = "";
 }
 
-inline void runShrugPose() {
+void runShrugPose() {
   Serial.println("SHRUG");
   runStandPose();
-  delay(200);
+  if (!interruptibleDelay(200)) return;
   setServoAngle(R3, 90); 
   setServoAngle(R4, 90); 
   setServoAngle(L3, 90); 
   setServoAngle(L4, 90);
-  delay(1000);
+  if (!interruptibleDelay(1000)) return;
   setServoAngle(R3, 0); 
   setServoAngle(R4, 180); 
   setServoAngle(L3, 180); 
   setServoAngle(L4, 0);
-  delay(1500);
+  if (!interruptibleDelay(1500)) return;
   runStandPose();
   if (currentCommand == "shrug") currentCommand = "";
 }
@@ -277,7 +277,7 @@ inline void runShrugPose() {
 void runDeadPose() {
   Serial.println("DEAD");
   runStandPose();
-  delay(200);
+  if (!interruptibleDelay(200)) return;
   setServoAngle(R3, 90); 
   setServoAngle(R4, 90); 
   setServoAngle(L3, 90); 
@@ -288,7 +288,7 @@ void runDeadPose() {
 void runCrabPose() {
   Serial.println("CRAB");
   runStandPose();
-  delay(200);
+  if (!interruptibleDelay(200)) return;
   setServoAngle(R1, 90); 
   setServoAngle(R2, 90); 
   setServoAngle(L1, 90); 
@@ -302,12 +302,12 @@ void runCrabPose() {
     setServoAngle(R3, 135); 
     setServoAngle(L3, 0); 
     setServoAngle(L4, 180);
-    delay(300);
+    if (!interruptibleDelay(300)) return;
     setServoAngle(R4, 0); 
     setServoAngle(R3, 180); 
     setServoAngle(L3, 45); 
     setServoAngle(L4, 135);
-    delay(300);
+    if (!interruptibleDelay(300)) return;
   }
   runStandPose();
   if (currentCommand == "crab") currentCommand = "";

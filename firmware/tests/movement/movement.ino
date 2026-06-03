@@ -37,6 +37,8 @@ byte   buffer_pos = 0;
 
 void setServoAngle(uint8_t channel, int angle);
 bool pressingCheck(String cmd, int ms);
+void checkSerial();
+bool interruptibleDelay(int ms);
 
 // ======================================================================
 // Setup
@@ -134,7 +136,6 @@ void loop() {
         // Stop command
         if (strcmp(command_buffer, "stop") == 0) {
           currentCommand = "";
-          runStandPose();
           Serial.println("STOPPED");
         }
 
@@ -281,6 +282,59 @@ bool pressingCheck(String cmd, int ms) {
       return false;
     }
     yield(); // Cooperative non‑blocking
+  }
+  return true;
+}
+
+// Reads and processes any pending serial bytes mid-animation so that
+// commands like "stop" are acted on immediately rather than queued.
+void checkSerial() {
+  while (Serial.available()) {
+    char c = Serial.read();
+    if (c == '\n' || c == '\r') {
+      if (buffer_pos > 0) {
+        command_buffer[buffer_pos] = '\0';
+        buffer_pos = 0;
+        if (strcmp(command_buffer, "stop") == 0) {
+          currentCommand = "";
+          Serial.println("STOPPED");
+        }
+        else if (strcmp(command_buffer, "walk")   == 0) { currentCommand = "forward"; }
+        else if (strcmp(command_buffer, "back")   == 0) { currentCommand = "backward"; }
+        else if (strcmp(command_buffer, "left")   == 0) { currentCommand = "left"; }
+        else if (strcmp(command_buffer, "right")  == 0) { currentCommand = "right"; }
+        else if (strcmp(command_buffer, "wave")   == 0) { currentCommand = "wave"; }
+        else if (strcmp(command_buffer, "dance")  == 0) { currentCommand = "dance"; }
+        else if (strcmp(command_buffer, "swim")   == 0) { currentCommand = "swim"; }
+        else if (strcmp(command_buffer, "point")  == 0) { currentCommand = "point"; }
+        else if (strcmp(command_buffer, "pushup") == 0) { currentCommand = "pushup"; }
+        else if (strcmp(command_buffer, "bow")    == 0) { currentCommand = "bow"; }
+        else if (strcmp(command_buffer, "cute")   == 0) { currentCommand = "cute"; }
+        else if (strcmp(command_buffer, "freaky") == 0) { currentCommand = "freaky"; }
+        else if (strcmp(command_buffer, "worm")   == 0) { currentCommand = "worm"; }
+        else if (strcmp(command_buffer, "shake")  == 0) { currentCommand = "shake"; }
+        else if (strcmp(command_buffer, "shrug")  == 0) { currentCommand = "shrug"; }
+        else if (strcmp(command_buffer, "dead")   == 0) { currentCommand = "dead"; }
+        else if (strcmp(command_buffer, "crab")   == 0) { currentCommand = "crab"; }
+        else if (strcmp(command_buffer, "rest")   == 0) { currentCommand = ""; runRestPose(); }
+        else if (strcmp(command_buffer, "stand")  == 0) { currentCommand = ""; runStandPose(); }
+      }
+    } else if (buffer_pos < sizeof(command_buffer) - 1) {
+      command_buffer[buffer_pos++] = c;
+    }
+  }
+}
+
+// Drop-in replacement for delay() inside animated poses.
+// Returns false if currentCommand changed mid-wait (interrupted),
+// so the caller can bail out of the rest of the animation.
+bool interruptibleDelay(int ms) {
+  String cmdAtStart = currentCommand;
+  unsigned long start = millis();
+  while (millis() - start < ms) {
+    checkSerial();
+    if (currentCommand != cmdAtStart) return false;
+    yield();
   }
   return true;
 }

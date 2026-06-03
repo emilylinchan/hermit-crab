@@ -54,6 +54,8 @@ extern MovementState currentCommand;
 
 extern void setServoAngle(uint8_t channel, int angle);
 extern bool pressingCheck(MovementState expectedState, int ms);
+extern void checkSerial();
+extern bool interruptibleDelay(int ms);
 
 // ======================================================================
 // POSE & MOVEMENT SEQUENCE PROTOTYPES

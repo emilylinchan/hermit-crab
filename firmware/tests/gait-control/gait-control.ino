@@ -6,21 +6,23 @@
 // ======================================================================
 
 // ---- Hardware ----
-const int OPERATING_FREQ    = 50;                                       // Hz
-const int servoPins[8]      = {13, 14, 15, 16, 17, 18, 19, 21};        // Index: 0  1  2  3  4  5  6  7
+const int OPERATING_FREQ = 50;      
+// Index:                 0   1   2   3   4    5   6   7
+// Label:                 R1  R2  L1  L2  R4  R3  L3  L4
+const int servoPins[8] = {13, 14, 22, 16, 17, 18, 19, 21};       
 
 // ---- MG90D Pulse Calibration ----
 // Full travel: 500–2500 µs → 2000 µs span for 270°
 // Trimming to center 180°: (45° / 270°) * 2000 µs ≈ 333 µs per side
-const int MIN_PULSE         = 833;      // 500  + 333
-const int MAX_PULSE         = 2167;     // 2500 - 333
+const int MIN_PULSE = 833;      // 500  + 333
+const int MAX_PULSE = 2167;     // 2500 - 333
 
 // ---- Tuning ----
-int frameDelay              = 100;      // ms between gait frames
-int motorCurrentDelay       = 5;        // ms between servo writes (prevents brownout)
+int frameDelay         = 100;      // ms between gait frames
+int motorCurrentDelay  = 5;        // ms between servo writes (prevents brownout)
 
 // ---- Subtrim ----
-int8_t servoSubtrim[8]      = {0, 0, 0, 0, 0, 0, 0, 0};
+int8_t servoSubtrim[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 
 // ======================================================================
 // STATE MACHINE
@@ -78,10 +80,12 @@ byte bufferPos = 0;
 // PROTOTYPES
 // ======================================================================
 
-void        setServoAngle(uint8_t channel, int angle);
-bool        pressingCheck(MovementState expectedState, int ms);
-bool        parseMovementCommand(const char* str, MovementState& out);
-void        handleSubtrimCommand(const char* buf);
+void setServoAngle(uint8_t channel, int angle);
+bool pressingCheck(MovementState expectedState, int ms);
+bool parseMovementCommand(const char* str, MovementState& out);
+void handleSubtrimCommand(const char* buf);
+void checkSerial();
+bool interruptibleDelay(int ms);
 
 // ======================================================================
 // SETUP
@@ -93,8 +97,7 @@ void setup() {
 
   Serial.println("Hermit Crab booting up...");
 
-  // Reserve all 4 LEDC hardware timers so that the Servo library can
-  // guarantee stable microsecond pulses for PWM
+  // Reserve all 4 LEDC hardware timers so that the Servo library can guarantee stable microsecond pulses for PWM
   ESP32PWM::allocateTimer(0);
   ESP32PWM::allocateTimer(1);
   ESP32PWM::allocateTimer(2);
@@ -143,35 +146,38 @@ void setup() {
 void loop() {
 
   // ---- State Machine Dispatch ----
-  // STATE_STAND and STATE_REST are not here — they execute once inside
-  // their pose functions and self-transition back to STATE_IDLE.
   switch (currentCommand) {
-    case STATE_IDLE:                                    break;
-    case STATE_FORWARD:  runWalkPose();                 break;
-    case STATE_BACKWARD: runWalkBackward();             break;
-    case STATE_LEFT:     runTurnLeft();                 break;
-    case STATE_RIGHT:    runTurnRight();                break;
-    case STATE_WAVE:     runWavePose();                 break;
-    case STATE_DANCE:    runDancePose();                break;
-    case STATE_SWIM:     runSwimPose();                 break;
-    case STATE_POINT:    runPointPose();                break;
-    case STATE_PUSHUP:   runPushupPose();               break;
-    case STATE_BOW:      runBowPose();                  break;
-    case STATE_CUTE:     runCutePose();                 break;
-    case STATE_FREAKY:   runFreakyPose();               break;
-    case STATE_WORM:     runWormPose();                 break;
-    case STATE_SHAKE:    runShakePose();                break;
-    case STATE_SHRUG:    runShrugPose();                break;
-    case STATE_DEAD:     runDeadPose();                 break;
-    case STATE_CRAB:     runCrabPose();                 break;
-    default:                                            break;
+    case STATE_IDLE:                         break;
+    case STATE_STAND:    runStandPose();     break;
+    case STATE_REST:     runRestPose();      break;
+    case STATE_FORWARD:  runWalkPose();      break;
+    case STATE_BACKWARD: runWalkBackward();  break;
+    case STATE_LEFT:     runTurnLeft();      break;
+    case STATE_RIGHT:    runTurnRight();     break;
+    case STATE_WAVE:     runWavePose();      break;
+    case STATE_DANCE:    runDancePose();     break;
+    case STATE_SWIM:     runSwimPose();      break;
+    case STATE_POINT:    runPointPose();     break;
+    case STATE_PUSHUP:   runPushupPose();    break;
+    case STATE_BOW:      runBowPose();       break;
+    case STATE_CUTE:     runCutePose();      break;
+    case STATE_FREAKY:   runFreakyPose();    break;
+    case STATE_WORM:     runWormPose();      break;
+    case STATE_SHAKE:    runShakePose();     break;
+    case STATE_SHRUG:    runShrugPose();     break;
+    case STATE_DEAD:     runDeadPose();      break;
+    case STATE_CRAB:     runCrabPose();      break;
+    default:                                 break;
   }
 
   // ---- Serial CLI ----
   if (Serial.available()) {
     char c = Serial.read();
 
+    // Set state if end of command enetered
     if (c == '\n' || c == '\r') {
+
+      // Reset command buffer
       if (bufferPos > 0) {
         commandBuffer[bufferPos] = '\0';
         bufferPos = 0;
@@ -315,6 +321,43 @@ bool pressingCheck(MovementState expectedState, int ms) {
       return false;
     }
     yield(); // Cooperative non-blocking
+  }
+  return true;
+}
+
+// Reads and processes any pending serial bytes mid-animation so that
+// commands like "stop" are acted on immediately rather than queued.
+void checkSerial() {
+  while (Serial.available()) {
+    char c = Serial.read();
+    if (c == '\n' || c == '\r') {
+      if (bufferPos > 0) {
+        commandBuffer[bufferPos] = '\0';
+        bufferPos = 0;
+        MovementState parsed;
+        if (parseMovementCommand(commandBuffer, parsed)) {
+          currentCommand = parsed;
+          Serial.print("Command: ");
+          Serial.println(commandBuffer);
+        }
+        // Subtrim and direct motor commands are intentionally not handled
+        // here — they require argument parsing that is only done in loop().
+      }
+    } else if (bufferPos < sizeof(commandBuffer) - 1) {
+      commandBuffer[bufferPos++] = c;
+    }
+  }
+}
+
+// Drop-in replacement for delay() inside animated poses.
+// Returns false if currentCommand changed mid-wait so the caller can bail out of the rest of the animation.
+bool interruptibleDelay(int ms) {
+  MovementState stateAtStart = currentCommand;
+  unsigned long start = millis();
+  while (millis() - start < ms) {
+    checkSerial();
+    if (currentCommand != stateAtStart) return false;
+    yield();
   }
   return true;
 }

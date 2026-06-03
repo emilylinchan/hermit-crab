@@ -20,6 +20,8 @@ extern String currentCommand;
 
 extern void setServoAngle(uint8_t channel, int angle);
 extern bool pressingCheck(String cmd, int ms);
+extern void checkSerial();
+extern bool interruptibleDelay(int ms);
 
 // Function prototypes for pose and movement sequences
 void runRestPose();

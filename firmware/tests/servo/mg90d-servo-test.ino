@@ -8,7 +8,8 @@
 Servo servos[8];
 
 // Motor Pin Mapping
-// Index: 0  1  2  3  4   5   6   7
+// Index:                 0   1   2   3   4    5   6   7
+// Label:                 R1  R2  L1  L2  R4  R3  L3  L4
 const int servoPins[8] = {13, 14, 15, 16, 17, 18, 19, 21};
 
 // ---- MG90D 270° SERVO CALIBRATION ----
