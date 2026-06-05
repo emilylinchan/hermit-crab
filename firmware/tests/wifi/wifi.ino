@@ -12,6 +12,7 @@ constexpr char PASSWORD[] = "12345678";
 
 // ---- Hardware ----
 constexpr uint8_t OPERATING_FREQ = 50;      
+
 // Index:                         0   1   2   3   4   5   6   7
 // Label:                         R1  R2  L1  L2  R4  R3  L3  L4
 constexpr uint8_t servoPins[8] = {13, 14, 22, 16, 17, 18, 19, 21};       
@@ -97,8 +98,11 @@ bool interruptibleDelay(int ms);
 // ======================================================================
 
 void setup() {
+  // Initial serial communication
   Serial.begin(115200);
-  while (!Serial);
+  delay(10);
+
+  // 
 
   Serial.println("Hermit Crab booting up...");
 
