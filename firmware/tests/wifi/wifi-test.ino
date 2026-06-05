@@ -38,7 +38,7 @@ void setup()
     Serial.println("\n[*] Creating AP");
     WiFi.mode(WIFI_AP);
     WiFi.softAPConfig(local_ip, gateway, subnet);
-    WiFi.softAP(ssid, password, 1, hide_SSID, max_connection);
+    WiFi.softAP(ssid, password, hide_SSID, max_connection);
     Serial.print("[+] AP Created with IP Gateway ");
     Serial.println(WiFi.softAPIP());
 }
