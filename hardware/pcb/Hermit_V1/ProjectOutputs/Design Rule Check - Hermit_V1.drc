@@ -1,0 +1,207 @@
+Protel Design System Design Rule Check
+PCB File : C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc
+Date     : 6/11/2026
+Time     : 10:35:51 PM
+
+WARNING: Drilled SMT Pads found
+   Pad C14-1(34.696mm,56.387mm) on Signal Top
+
+Processing Rule : Clearance Constraint (Gap=0.203mm) (OnLayer('Bottom Layer')),(All)
+Rule Violations :0
+
+Processing Rule : Clearance Constraint (Gap=0.203mm) (OnLayer('Top Layer')),(All)
+Rule Violations :0
+
+Processing Rule : Clearance Constraint (Gap=0.2mm) (All),(All)
+   Violation between Clearance Constraint: (Collision < 0.127mm) Between Pad U1-15(19.849mm,18.474mm) on Signal Top And Via (19.455mm,18.08mm) from Signal Top to Signal Bottom 
+   Violation between Clearance Constraint: (Collision < 0.127mm) Between Pad U1-15(19.849mm,18.474mm) on Signal Top And Via (19.455mm,18.867mm) from Signal Top to Signal Bottom 
+   Violation between Clearance Constraint: (Collision < 0.127mm) Between Pad U1-15(19.849mm,18.474mm) on Signal Top And Via (20.243mm,18.08mm) from Signal Top to Signal Bottom 
+   Violation between Clearance Constraint: (Collision < 0.127mm) Between Pad U1-15(19.849mm,18.474mm) on Signal Top And Via (20.243mm,18.867mm) from Signal Top to Signal Bottom 
+   Violation between Clearance Constraint: (Collision < 0.127mm) Between Pad X1-41(17.931mm,73.74mm) on Signal Top And Via (17.95mm,73.75mm) from Signal Top to Signal Bottom 
+   Violation between Clearance Constraint: (Collision < 0.127mm) Between Pad X1-42(17.931mm,75.14mm) on Signal Top And Via (17.95mm,75.15mm) from Signal Top to Signal Bottom 
+   Violation between Clearance Constraint: (Collision < 0.127mm) Between Pad X1-43(16.531mm,75.14mm) on Signal Top And Via (16.55mm,75.15mm) from Signal Top to Signal Bottom 
+   Violation between Clearance Constraint: (Collision < 0.127mm) Between Pad X1-44(16.531mm,73.74mm) on Signal Top And Via (16.55mm,73.75mm) from Signal Top to Signal Bottom 
+   Violation between Clearance Constraint: (Collision < 0.127mm) Between Pad X1-45(16.531mm,72.34mm) on Signal Top And Via (16.5mm,72.35mm) from Signal Top to Signal Bottom 
+   Violation between Clearance Constraint: (Collision < 0.127mm) Between Pad X1-46(17.931mm,72.34mm) on Signal Top And Via (17.95mm,72.35mm) from Signal Top to Signal Bottom 
+   Violation between Clearance Constraint: (Collision < 0.127mm) Between Pad X1-47(19.331mm,72.34mm) on Signal Top And Via (19.3mm,72.35mm) from Signal Top to Signal Bottom 
+   Violation between Clearance Constraint: (Collision < 0.127mm) Between Pad X1-48(19.331mm,73.74mm) on Signal Top And Via (19.35mm,73.7mm) from Signal Top to Signal Bottom 
+   Violation between Clearance Constraint: (Collision < 0.127mm) Between Pad X1-49(19.331mm,75.14mm) on Signal Top And Via (19.35mm,75.15mm) from Signal Top to Signal Bottom 
+Rule Violations :13
+
+Processing Rule : Clearance Constraint (Gap=0.2mm) (All),(All)
+   Violation between Clearance Constraint: (0.2mm < 0.5mm) Between Pad J12-A1(17.753mm,6.265mm) on Multi-Layer And Pad J12-A4(18.603mm,6.265mm) on Multi-Layer 
+   Violation between Clearance Constraint: (0.2mm < 0.5mm) Between Pad J12-A12(23.703mm,6.265mm) on Multi-Layer And Pad J12-A9(22.853mm,6.265mm) on Multi-Layer 
+   Violation between Clearance Constraint: (0.2mm < 0.5mm) Between Pad J12-A4(18.603mm,6.265mm) on Multi-Layer And Pad J12-A5(19.453mm,6.265mm) on Multi-Layer 
+   Violation between Clearance Constraint: (0.2mm < 0.5mm) Between Pad J12-A5(19.453mm,6.265mm) on Multi-Layer And Pad J12-A6(20.303mm,6.265mm) on Multi-Layer 
+   Violation between Clearance Constraint: (0.2mm < 0.5mm) Between Pad J12-A6(20.303mm,6.265mm) on Multi-Layer And Pad J12-A7(21.153mm,6.265mm) on Multi-Layer 
+   Violation between Clearance Constraint: (0.2mm < 0.5mm) Between Pad J12-A7(21.153mm,6.265mm) on Multi-Layer And Pad J12-A8(22.003mm,6.265mm) on Multi-Layer 
+   Violation between Clearance Constraint: (0.2mm < 0.5mm) Between Pad J12-A8(22.003mm,6.265mm) on Multi-Layer And Pad J12-A9(22.853mm,6.265mm) on Multi-Layer 
+   Violation between Clearance Constraint: (0.2mm < 0.5mm) Between Pad J12-B1(23.703mm,4.915mm) on Multi-Layer And Pad J12-B4(22.853mm,4.915mm) on Multi-Layer 
+   Violation between Clearance Constraint: (0.2mm < 0.5mm) Between Pad J12-B12(17.753mm,4.915mm) on Multi-Layer And Pad J12-B9(18.603mm,4.915mm) on Multi-Layer 
+   Violation between Clearance Constraint: (0.2mm < 0.5mm) Between Pad J12-B4(22.853mm,4.915mm) on Multi-Layer And Pad J12-B5(22.003mm,4.915mm) on Multi-Layer 
+   Violation between Clearance Constraint: (0.2mm < 0.5mm) Between Pad J12-B5(22.003mm,4.915mm) on Multi-Layer And Pad J12-B6(21.153mm,4.915mm) on Multi-Layer 
+   Violation between Clearance Constraint: (0.2mm < 0.5mm) Between Pad J12-B6(21.153mm,4.915mm) on Multi-Layer And Pad J12-B7(20.303mm,4.915mm) on Multi-Layer 
+   Violation between Clearance Constraint: (0.2mm < 0.5mm) Between Pad J12-B7(20.303mm,4.915mm) on Multi-Layer And Pad J12-B8(19.453mm,4.915mm) on Multi-Layer 
+   Violation between Clearance Constraint: (0.2mm < 0.5mm) Between Pad J12-B8(19.453mm,4.915mm) on Multi-Layer And Pad J12-B9(18.603mm,4.915mm) on Multi-Layer 
+   Violation between Clearance Constraint: (0.051mm < 0.2mm) Between Pad LED1-1(24.892mm,57.69mm) on Signal Top And Region (0 hole(s)) Signal Top 
+   Violation between Clearance Constraint: (0.051mm < 0.2mm) Between Pad LED1-2(24.892mm,58.896mm) on Signal Top And Region (0 hole(s)) Signal Top 
+   Violation between Clearance Constraint: (0.051mm < 0.2mm) Between Pad R9-1(21.704mm,60.96mm) on Signal Bottom And Region (0 hole(s)) Keep-Out Layer 
+   Violation between Clearance Constraint: (0.051mm < 0.2mm) Between Pad R9-1(21.704mm,60.96mm) on Signal Bottom And Region (0 hole(s)) Signal Bottom 
+   Violation between Clearance Constraint: (0.051mm < 0.2mm) Between Pad R9-2(20.206mm,60.96mm) on Signal Bottom And Region (0 hole(s)) Keep-Out Layer 
+   Violation between Clearance Constraint: (0.051mm < 0.2mm) Between Pad R9-2(20.206mm,60.96mm) on Signal Bottom And Region (0 hole(s)) Signal Bottom 
+   Violation between Clearance Constraint: (Collision < 0.2mm) Between Pad U1-15(19.849mm,18.474mm) on Signal Top And Pad U1-V(19.455mm,18.08mm) on Multi-Layer 
+   Violation between Clearance Constraint: (Collision < 0.2mm) Between Pad U1-15(19.849mm,18.474mm) on Signal Top And Pad U1-V(19.455mm,18.867mm) on Multi-Layer 
+   Violation between Clearance Constraint: (Collision < 0.2mm) Between Pad U1-15(19.849mm,18.474mm) on Signal Top And Pad U1-V(20.243mm,18.08mm) on Multi-Layer 
+   Violation between Clearance Constraint: (Collision < 0.2mm) Between Pad U1-15(19.849mm,18.474mm) on Signal Top And Pad U1-V(20.243mm,18.867mm) on Multi-Layer 
+   Violation between Clearance Constraint: (Collision < 0.127mm) Between Pad U1-V(19.455mm,18.08mm) on Multi-Layer And Via (19.455mm,18.08mm) from Signal Top to Signal Bottom 
+   Violation between Clearance Constraint: (0.406mm < 0.5mm) Between Hole of Pad U1-V(19.455mm,18.08mm) on Multi-Layer And Via (19.455mm,18.867mm) from Signal Top to Signal Bottom 
+   Violation between Clearance Constraint: (0.406mm < 0.5mm) Between Hole of Pad U1-V(19.455mm,18.08mm) on Multi-Layer And Via (20.243mm,18.08mm) from Signal Top to Signal Bottom 
+   Violation between Clearance Constraint: (0.406mm < 0.5mm) Between Hole of Pad U1-V(19.455mm,18.867mm) on Multi-Layer And Via (19.455mm,18.08mm) from Signal Top to Signal Bottom 
+   Violation between Clearance Constraint: (Collision < 0.127mm) Between Pad U1-V(19.455mm,18.867mm) on Multi-Layer And Via (19.455mm,18.867mm) from Signal Top to Signal Bottom 
+   Violation between Clearance Constraint: (0.406mm < 0.5mm) Between Hole of Pad U1-V(19.455mm,18.867mm) on Multi-Layer And Via (20.243mm,18.867mm) from Signal Top to Signal Bottom 
+   Violation between Clearance Constraint: (0.406mm < 0.5mm) Between Hole of Pad U1-V(20.243mm,18.08mm) on Multi-Layer And Via (19.455mm,18.08mm) from Signal Top to Signal Bottom 
+   Violation between Clearance Constraint: (Collision < 0.127mm) Between Pad U1-V(20.243mm,18.08mm) on Multi-Layer And Via (20.243mm,18.08mm) from Signal Top to Signal Bottom 
+   Violation between Clearance Constraint: (0.406mm < 0.5mm) Between Hole of Pad U1-V(20.243mm,18.08mm) on Multi-Layer And Via (20.243mm,18.867mm) from Signal Top to Signal Bottom 
+   Violation between Clearance Constraint: (0.406mm < 0.5mm) Between Hole of Pad U1-V(20.243mm,18.867mm) on Multi-Layer And Via (19.455mm,18.867mm) from Signal Top to Signal Bottom 
+   Violation between Clearance Constraint: (0.406mm < 0.5mm) Between Hole of Pad U1-V(20.243mm,18.867mm) on Multi-Layer And Via (20.243mm,18.08mm) from Signal Top to Signal Bottom 
+   Violation between Clearance Constraint: (Collision < 0.127mm) Between Pad U1-V(20.243mm,18.867mm) on Multi-Layer And Via (20.243mm,18.867mm) from Signal Top to Signal Bottom 
+Rule Violations :36
+
+Processing Rule : Short-Circuit Constraint (Allowed=No) (All),(All)
+   Violation between Short-Circuit Constraint: Between Pad U1-15(19.849mm,18.474mm) on Signal Top And Pad U1-V(19.455mm,18.08mm) on Multi-Layer Location : [X = 41.934mm][Y = 43.48mm]
+   Violation between Short-Circuit Constraint: Between Pad U1-15(19.849mm,18.474mm) on Signal Top And Pad U1-V(19.455mm,18.867mm) on Multi-Layer Location : [X = 41.934mm][Y = 44.267mm]
+   Violation between Short-Circuit Constraint: Between Pad U1-15(19.849mm,18.474mm) on Signal Top And Pad U1-V(20.243mm,18.08mm) on Multi-Layer Location : [X = 42.722mm][Y = 43.48mm]
+   Violation between Short-Circuit Constraint: Between Pad U1-15(19.849mm,18.474mm) on Signal Top And Pad U1-V(20.243mm,18.867mm) on Multi-Layer Location : [X = 42.722mm][Y = 44.267mm]
+   Violation between Short-Circuit Constraint: Between Pad U1-V(19.455mm,18.08mm) on Multi-Layer And Via (19.455mm,18.08mm) from Signal Top to Signal Bottom Location : [X = 41.934mm][Y = 43.48mm]
+   Violation between Short-Circuit Constraint: Between Pad U1-V(19.455mm,18.867mm) on Multi-Layer And Via (19.455mm,18.867mm) from Signal Top to Signal Bottom Location : [X = 41.934mm][Y = 44.267mm]
+   Violation between Short-Circuit Constraint: Between Pad U1-V(20.243mm,18.08mm) on Multi-Layer And Via (20.243mm,18.08mm) from Signal Top to Signal Bottom Location : [X = 42.722mm][Y = 43.48mm]
+   Violation between Short-Circuit Constraint: Between Pad U1-V(20.243mm,18.867mm) on Multi-Layer And Via (20.243mm,18.867mm) from Signal Top to Signal Bottom Location : [X = 42.722mm][Y = 44.267mm]
+Rule Violations :8
+
+Processing Rule : Un-Routed Net Constraint ( (All) )
+   Violation between Un-Routed Net Constraint: Net 3.3V Between Track (22.344mm,55.13mm)(22.61mm,54.864mm) on Signal Top And Pad C13-2(28.135mm,54.5mm) on Signal Top 
+   Violation between Un-Routed Net Constraint: Net 3.3V Between Pad J11-2(7.366mm,56.444mm) on Multi-Layer And Via (15.494mm,56.134mm) from Signal Top to Signal Bottom 
+   Violation between Un-Routed Net Constraint: Net GND Between Pad J12-B12(17.753mm,4.915mm) on Multi-Layer And Pad R13-1(19.939mm,3.556mm) on Signal Bottom 
+   Violation between Un-Routed Net Constraint: Net 3.3V Between Pad U3-3(18.269mm,55.63mm) on Signal Top And Track (18.796mm,54.72mm)(18.931mm,54.855mm) on Signal Top 
+   Violation between Un-Routed Net Constraint: Polygon  (NONET_L04_P-001) on PWR Dead Copper - Net Not Assigned.
+   Violation between Un-Routed Net Constraint: Net 3.3V Between Via (14.986mm,59.182mm) from Signal Top to Signal Bottom And Via (15.494mm,56.134mm) from Signal Top to Signal Bottom 
+Rule Violations :6
+
+Processing Rule : Modified Polygon (Allow modified: No), (Allow shelved: No)
+Rule Violations :0
+
+Processing Rule : Width Constraint (Min=0.089mm) (Max=2.54mm) (Preferred=0.381mm) (All)
+Rule Violations :0
+
+Processing Rule : Routing Topology Rule(Topology=Shortest) (All)
+Rule Violations :0
+
+Processing Rule : Power Plane Connect Rule(Relief Connect )(Expansion=0.508mm) (Conductor Width=0.254mm) (Air Gap=0.254mm) (Entries=4) (All)
+Rule Violations :0
+
+Processing Rule : Minimum Annular Ring (Minimum=0.13mm) (All)
+   Violation between Minimum Annular Ring: (0.125mm < 0.13mm) Pad J12-A1(17.753mm,6.265mm) on Multi-Layer (Annular Ring=0.125mm) On (Top Layer)
+   Violation between Minimum Annular Ring: (0.125mm < 0.13mm) Pad J12-A12(23.703mm,6.265mm) on Multi-Layer (Annular Ring=0.125mm) On (Top Layer)
+   Violation between Minimum Annular Ring: (0.125mm < 0.13mm) Pad J12-A4(18.603mm,6.265mm) on Multi-Layer (Annular Ring=0.125mm) On (Top Layer)
+   Violation between Minimum Annular Ring: (0.125mm < 0.13mm) Pad J12-A5(19.453mm,6.265mm) on Multi-Layer (Annular Ring=0.125mm) On (Top Layer)
+   Violation between Minimum Annular Ring: (0.125mm < 0.13mm) Pad J12-A6(20.303mm,6.265mm) on Multi-Layer (Annular Ring=0.125mm) On (Top Layer)
+   Violation between Minimum Annular Ring: (0.125mm < 0.13mm) Pad J12-A7(21.153mm,6.265mm) on Multi-Layer (Annular Ring=0.125mm) On (Top Layer)
+   Violation between Minimum Annular Ring: (0.125mm < 0.13mm) Pad J12-A8(22.003mm,6.265mm) on Multi-Layer (Annular Ring=0.125mm) On (Top Layer)
+   Violation between Minimum Annular Ring: (0.125mm < 0.13mm) Pad J12-A9(22.853mm,6.265mm) on Multi-Layer (Annular Ring=0.125mm) On (Top Layer)
+   Violation between Minimum Annular Ring: (0.125mm < 0.13mm) Pad J12-B1(23.703mm,4.915mm) on Multi-Layer (Annular Ring=0.125mm) On (Top Layer)
+   Violation between Minimum Annular Ring: (0.125mm < 0.13mm) Pad J12-B12(17.753mm,4.915mm) on Multi-Layer (Annular Ring=0.125mm) On (Top Layer)
+   Violation between Minimum Annular Ring: (0.125mm < 0.13mm) Pad J12-B4(22.853mm,4.915mm) on Multi-Layer (Annular Ring=0.125mm) On (Top Layer)
+   Violation between Minimum Annular Ring: (0.125mm < 0.13mm) Pad J12-B5(22.003mm,4.915mm) on Multi-Layer (Annular Ring=0.125mm) On (Top Layer)
+   Violation between Minimum Annular Ring: (0.125mm < 0.13mm) Pad J12-B6(21.153mm,4.915mm) on Multi-Layer (Annular Ring=0.125mm) On (Top Layer)
+   Violation between Minimum Annular Ring: (0.125mm < 0.13mm) Pad J12-B7(20.303mm,4.915mm) on Multi-Layer (Annular Ring=0.125mm) On (Top Layer)
+   Violation between Minimum Annular Ring: (0.125mm < 0.13mm) Pad J12-B8(19.453mm,4.915mm) on Multi-Layer (Annular Ring=0.125mm) On (Top Layer)
+   Violation between Minimum Annular Ring: (0.125mm < 0.13mm) Pad J12-B9(18.603mm,4.915mm) on Multi-Layer (Annular Ring=0.125mm) On (Top Layer)
+   Violation between Minimum Annular Ring: (0.127mm < 0.13mm) Pad U1-V(19.455mm,18.08mm) on Multi-Layer (Annular Ring=0.127mm) On (Top Layer)
+   Violation between Minimum Annular Ring: (0.127mm < 0.13mm) Pad U1-V(19.455mm,18.867mm) on Multi-Layer (Annular Ring=0.127mm) On (Top Layer)
+   Violation between Minimum Annular Ring: (0.127mm < 0.13mm) Pad U1-V(20.243mm,18.08mm) on Multi-Layer (Annular Ring=0.127mm) On (Top Layer)
+   Violation between Minimum Annular Ring: (0.127mm < 0.13mm) Pad U1-V(20.243mm,18.867mm) on Multi-Layer (Annular Ring=0.127mm) On (Top Layer)
+   Violation between Minimum Annular Ring: (0.125mm < 0.13mm) Via (16.55mm,73.75mm) from Signal Top to Signal Bottom (Annular Ring=0.125mm) On (Top Layer)
+   Violation between Minimum Annular Ring: (0.125mm < 0.13mm) Via (16.55mm,75.15mm) from Signal Top to Signal Bottom (Annular Ring=0.125mm) On (Top Layer)
+   Violation between Minimum Annular Ring: (0.125mm < 0.13mm) Via (16.5mm,72.35mm) from Signal Top to Signal Bottom (Annular Ring=0.125mm) On (Top Layer)
+   Violation between Minimum Annular Ring: (0.125mm < 0.13mm) Via (17.95mm,72.35mm) from Signal Top to Signal Bottom (Annular Ring=0.125mm) On (Top Layer)
+   Violation between Minimum Annular Ring: (0.125mm < 0.13mm) Via (17.95mm,73.75mm) from Signal Top to Signal Bottom (Annular Ring=0.125mm) On (Top Layer)
+   Violation between Minimum Annular Ring: (0.125mm < 0.13mm) Via (17.95mm,75.15mm) from Signal Top to Signal Bottom (Annular Ring=0.125mm) On (Top Layer)
+   Violation between Minimum Annular Ring: (0.125mm < 0.13mm) Via (19.35mm,73.7mm) from Signal Top to Signal Bottom (Annular Ring=0.125mm) On (Top Layer)
+   Violation between Minimum Annular Ring: (0.125mm < 0.13mm) Via (19.35mm,75.15mm) from Signal Top to Signal Bottom (Annular Ring=0.125mm) On (Top Layer)
+   Violation between Minimum Annular Ring: (0.125mm < 0.13mm) Via (19.3mm,72.35mm) from Signal Top to Signal Bottom (Annular Ring=0.125mm) On (Top Layer)
+   Violation between Minimum Annular Ring: (0.127mm < 0.13mm) Via (19.455mm,18.08mm) from Signal Top to Signal Bottom (Annular Ring=0.127mm) On (Top Layer)
+   Violation between Minimum Annular Ring: (0.127mm < 0.13mm) Via (19.455mm,18.867mm) from Signal Top to Signal Bottom (Annular Ring=0.127mm) On (Top Layer)
+   Violation between Minimum Annular Ring: (0.127mm < 0.13mm) Via (20.243mm,18.08mm) from Signal Top to Signal Bottom (Annular Ring=0.127mm) On (Top Layer)
+   Violation between Minimum Annular Ring: (0.127mm < 0.13mm) Via (20.243mm,18.867mm) from Signal Top to Signal Bottom (Annular Ring=0.127mm) On (Top Layer)
+   Violation between Minimum Annular Ring: (0.125mm < 0.13mm) Via (4.978mm,81.636mm) from Signal Top to Signal Bottom (Annular Ring=0.125mm) On (Top Layer)
+   Violation between Minimum Annular Ring: (0.125mm < 0.13mm) Via (8.128mm,81.686mm) from Signal Top to Signal Bottom (Annular Ring=0.125mm) On (Top Layer)
+Rule Violations :35
+
+Processing Rule : Hole Size Constraint (Min=0.2mm) (Max=6.3mm) (All)
+Rule Violations :0
+
+Processing Rule : Hole To Hole Clearance (Gap=0.254mm) (All),(All)
+   Violation between Hole To Hole Clearance Constraint: (Collision < 0.254mm) Between Pad U1-V(19.455mm,18.08mm) on Multi-Layer And Via (19.455mm,18.08mm) from Signal Top to Signal Bottom Pad/Via Touching Holes
+   Violation between Hole To Hole Clearance Constraint: (Collision < 0.254mm) Between Pad U1-V(19.455mm,18.867mm) on Multi-Layer And Via (19.455mm,18.867mm) from Signal Top to Signal Bottom Pad/Via Touching Holes
+   Violation between Hole To Hole Clearance Constraint: (Collision < 0.254mm) Between Pad U1-V(20.243mm,18.08mm) on Multi-Layer And Via (20.243mm,18.08mm) from Signal Top to Signal Bottom Pad/Via Touching Holes
+   Violation between Hole To Hole Clearance Constraint: (Collision < 0.254mm) Between Pad U1-V(20.243mm,18.867mm) on Multi-Layer And Via (20.243mm,18.867mm) from Signal Top to Signal Bottom Pad/Via Touching Holes
+Rule Violations :4
+
+Processing Rule : Minimum Solder Mask Sliver (Gap=0.1mm) (All),(All)
+   Violation between Minimum Solder Mask Sliver Constraint: (0.017mm < 0.1mm) Between Pad C12-1(27.35mm,56mm) on Signal Top And Pad C12-2(28.16mm,56mm) on Signal Top [Top Solder] Mask Sliver [0.017mm]
+   Violation between Minimum Solder Mask Sliver Constraint: (0.035mm < 0.1mm) Between Pad C13-1(27.257mm,54.5mm) on Signal Top And Pad C13-2(28.135mm,54.5mm) on Signal Top [Top Solder] Mask Sliver [0.035mm]
+   Violation between Minimum Solder Mask Sliver Constraint: (0.017mm < 0.1mm) Between Pad C14-1(34.696mm,56.387mm) on Signal Top And Pad C14-2(34.696mm,55.577mm) on Signal Top [Top Solder] Mask Sliver [0.017mm]
+   Violation between Minimum Solder Mask Sliver Constraint: (0.017mm < 0.1mm) Between Pad C17-1(31.345mm,77.245mm) on Signal Top And Pad C17-2(32.155mm,77.245mm) on Signal Top [Top Solder] Mask Sliver [0.017mm]
+   Violation between Minimum Solder Mask Sliver Constraint: (0.017mm < 0.1mm) Between Pad C6-1(15.748mm,11.961mm) on Signal Top And Pad C6-2(15.748mm,11.151mm) on Signal Top [Top Solder] Mask Sliver [0.017mm]
+   Violation between Minimum Solder Mask Sliver Constraint: (0.017mm < 0.1mm) Between Pad C7-1(19.786mm,15.164mm) on Signal Top And Pad C7-2(20.596mm,15.164mm) on Signal Top [Top Solder] Mask Sliver [0.017mm]
+   Violation between Minimum Solder Mask Sliver Constraint: (0.067mm < 0.1mm) Between Pad D2-A(17.805mm,28.93mm) on Signal Top And Via (20.066mm,28.956mm) from Signal Top to Signal Bottom [Top Solder] Mask Sliver [0.067mm]
+   Violation between Minimum Solder Mask Sliver Constraint: (0.047mm < 0.1mm) Between Pad R10-1(8.255mm,67.564mm) on Signal Top And Pad R10-2(7.405mm,67.564mm) on Signal Top [Top Solder] Mask Sliver [0.047mm]
+   Violation between Minimum Solder Mask Sliver Constraint: (0.047mm < 0.1mm) Between Pad R11-1(14.986mm,61.385mm) on Signal Top And Pad R11-2(14.986mm,60.535mm) on Signal Top [Top Solder] Mask Sliver [0.047mm]
+   Violation between Minimum Solder Mask Sliver Constraint: (0.08mm < 0.1mm) Between Region (0 hole(s)) Top Solder And Region (0 hole(s)) Top Solder [Top Solder] Mask Sliver [0.08mm]
+   Violation between Minimum Solder Mask Sliver Constraint: (0.08mm < 0.1mm) Between Region (0 hole(s)) Top Solder And Region (0 hole(s)) Top Solder [Top Solder] Mask Sliver [0.08mm]
+   Violation between Minimum Solder Mask Sliver Constraint: (0.08mm < 0.1mm) Between Region (0 hole(s)) Top Solder And Region (0 hole(s)) Top Solder [Top Solder] Mask Sliver [0.08mm]
+   Violation between Minimum Solder Mask Sliver Constraint: (0.08mm < 0.1mm) Between Region (0 hole(s)) Top Solder And Region (0 hole(s)) Top Solder [Top Solder] Mask Sliver [0.08mm]
+   Violation between Minimum Solder Mask Sliver Constraint: (0.08mm < 0.1mm) Between Region (0 hole(s)) Top Solder And Region (0 hole(s)) Top Solder [Top Solder] Mask Sliver [0.08mm]
+   Violation between Minimum Solder Mask Sliver Constraint: (0.08mm < 0.1mm) Between Region (0 hole(s)) Top Solder And Region (0 hole(s)) Top Solder [Top Solder] Mask Sliver [0.08mm]
+   Violation between Minimum Solder Mask Sliver Constraint: (0.08mm < 0.1mm) Between Region (0 hole(s)) Top Solder And Region (0 hole(s)) Top Solder [Top Solder] Mask Sliver [0.08mm]
+   Violation between Minimum Solder Mask Sliver Constraint: (0.08mm < 0.1mm) Between Region (0 hole(s)) Top Solder And Region (0 hole(s)) Top Solder [Top Solder] Mask Sliver [0.08mm]
+Rule Violations :17
+
+Processing Rule : Silk To Solder Mask (Clearance=0.1mm) (IsPad),(All)
+   Violation between Silk To Solder Mask Clearance Constraint: (0.087mm < 0.1mm) Between Pad C4-1(14.284mm,19.558mm) on Signal Top And Track (15.084mm,18.908mm)(15.384mm,18.908mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.087mm]
+   Violation between Silk To Solder Mask Clearance Constraint: (0.087mm < 0.1mm) Between Pad C4-1(14.284mm,19.558mm) on Signal Top And Track (15.084mm,20.208mm)(15.384mm,20.208mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.087mm]
+   Violation between Silk To Solder Mask Clearance Constraint: (0.087mm < 0.1mm) Between Pad C4-2(16.184mm,19.558mm) on Signal Top And Track (15.084mm,18.908mm)(15.384mm,18.908mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.087mm]
+   Violation between Silk To Solder Mask Clearance Constraint: (0.087mm < 0.1mm) Between Pad C4-2(16.184mm,19.558mm) on Signal Top And Track (15.084mm,20.208mm)(15.384mm,20.208mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.087mm]
+Rule Violations :4
+
+Processing Rule : Silk to Silk (Clearance=0.1mm) (All),(All)
+Rule Violations :0
+
+Processing Rule : Net Antennae (Tolerance=0mm) (All)
+   Violation between Net Antennae: Via (14.986mm,59.182mm) from Signal Top to Signal Bottom 
+   Violation between Net Antennae: Via (15.494mm,56.134mm) from Signal Top to Signal Bottom 
+   Violation between Net Antennae: Via (19.455mm,18.08mm) from Signal Top to Signal Bottom 
+   Violation between Net Antennae: Via (19.455mm,18.867mm) from Signal Top to Signal Bottom 
+   Violation between Net Antennae: Via (20.243mm,18.08mm) from Signal Top to Signal Bottom 
+   Violation between Net Antennae: Via (20.243mm,18.867mm) from Signal Top to Signal Bottom 
+   Violation between Net Antennae: Via (22.225mm,55.88mm) from Signal Top to Signal Bottom 
+   Violation between Net Antennae: Via (29.82mm,53.619mm) from Signal Top to Signal Bottom 
+Rule Violations :8
+
+Processing Rule : Board Clearance Constraint (Gap=0mm) (All)
+   Violation between Board Outline Clearance(Outline Edge): (Collision < 0.3mm) Between Board Edge And Text "X1" (8.877mm,90.513mm) on Top Overlay 
+   Violation between Board Outline Clearance(Outline Edge): (Collision < 0.3mm) Between Board Edge And Track (10.431mm,83.2mm)(10.431mm,88.95mm) on Top Overlay 
+   Violation between Board Outline Clearance(Outline Edge): (Collision < 0.3mm) Between Board Edge And Track (10.431mm,88.95mm)(28.431mm,88.95mm) on Top Overlay 
+   Violation between Board Outline Clearance(Outline Edge): (0.065mm < 0.3mm) Between Board Edge And Track (16.258mm,0.165mm)(16.258mm,0.515mm) on Top Overlay 
+   Violation between Board Outline Clearance(Outline Edge): (0.065mm < 0.3mm) Between Board Edge And Track (16.258mm,0.165mm)(25.198mm,0.165mm) on Top Overlay 
+   Violation between Board Outline Clearance(Outline Edge): (0.065mm < 0.3mm) Between Board Edge And Track (25.198mm,0.165mm)(25.198mm,0.515mm) on Top Overlay 
+   Violation between Board Outline Clearance(Outline Edge): (Collision < 0.3mm) Between Board Edge And Track (28.431mm,83.2mm)(28.431mm,88.95mm) on Top Overlay 
+Rule Violations :7
+
+Processing Rule : Height Constraint (Min=0mm) (Max=25.4mm) (Prefered=12.7mm) (All)
+Rule Violations :0
+
+
+Violations Detected : 138
+Waived Violations : 0
+Time Elapsed        : 00:00:00

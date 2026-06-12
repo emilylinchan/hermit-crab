@@ -1,0 +1,813 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html">
+<style type="text/css">
+		h1, h2, h3, h4, h5, h6 {
+			font-family : segoe ui;
+			color : black;
+			background-color : #EDE7D9;
+			padding: 0.3em;
+		}
+
+		h1 {
+			font-size: 1.2em;
+		}		
+
+		h2 {
+			font-size: 1.2em;
+		}
+
+		body {
+			font-family : segoe ui;
+		}
+
+		td, th {
+			padding: 0.5em;
+			text-align : left;
+			width: 10em;
+		}
+		th {
+			background-color : #EEEEEE;
+
+		}
+		th.column1, td.column1 {
+			text-align: left;
+			width : auto;
+		}
+		table {
+			width : 100%;
+			font-size: 0.9em;
+		}
+
+		.DRC_summary_header {
+			padding-bottom : 0.1em;
+			border : 0px solid black;
+			width: 100%;
+			align: left;
+		}
+
+		.DRC_summary_header_col1,
+		.DRC_summary_header_col2, 
+		.DRC_summary_header_col3 {
+			color : black;
+			font-size:100%;
+			padding : 0em;
+			padding-top : 0.2em;
+			padding-bottom 0.2em;
+			border : 0px solid black;
+			vertical-align: top;
+			text-align: left;
+		}
+
+		.DRC_summary_header_col1 {
+			font-weight: bold;
+			width: 9em;
+		}
+
+		.DRC_summary_header_col2 {
+			width: 0.1em;
+		
+		}
+
+		.DRC_summary_header_col3 {
+			width : auto;
+		}
+
+		.header_holder {
+		    Width = 100%;
+		    border = 0px solid green;
+		    padding = 0;
+		}
+
+
+		.front_matter, .front_matter_column1, .front_matter_column2, .front_matter_column3
+		{
+			left : 0;
+			top : 0;
+			padding: 0em;
+			padding-top : 0.1em;
+			border : 0px solid black;
+			width : 100%;
+			vertical-align: top;
+			text-align: left;
+		}
+
+		.front_matter_column1 {
+			width : 8em;
+			font-weight: bold;
+		}
+
+		.front_matter_column2 {
+			width: 0.1em;
+		}
+
+		.front_matter_column3 {
+			width : auto;
+		}
+
+		.total_column1, .total_column {
+			font-weight : bold;
+		}
+		.total_column1 {
+			text-align : left;
+		}
+		.warning, .error {
+			color : red;
+			font-weight : bold;
+		}
+		tr.onmouseout_odd {
+			background-color : #white;
+		}
+		tr.onmouseout_even { 
+			background-color : #FAFAFA;
+		}
+		tr.onmouseover_odd, tr.onmouseover_even { 
+			background-color : #EEEEEE;
+		} 
+		a:link, a:visited, .q a:link,.q a:active,.q {
+			color: #21489e; 
+		}
+		a:link.callback, a:visited.callback { 
+			color: #21489e;
+		}
+		a:link.customize, a:visited.customize {
+			color: #C0C0C0;
+			position: absolute; 
+			right: 10px;
+		}	
+		p.contents_level1 {
+			font-weight : bold;
+			font-size : 110%;
+			margin : 0.5em;
+		}
+		p.contents_level2 {
+			position : relative;
+			left : 20px;
+			margin : 0.5em;
+		}
+	</style><script type="text/javascript">
+		function coordToMils(coord) {
+			var number = coord / 10000;
+			
+			if (number != number.toFixed(3))
+				number = number.toFixed(3);
+
+			return number + 'mil'
+		}
+
+		function coordToMM(coord) {
+			var number = 0.0254 * coord / 10000;
+			
+			if (number != number.toFixed(4))
+				number = number.toFixed(4);
+			
+			return number + 'mm'
+		}
+	
+		function convertCoord(coordNode, units) {
+			for (var i = 0; i < coordNode.childNodes.length; i++) {
+				coordNode.removeChild(coordNode.childNodes[i]);
+			}
+
+			var coord = coordNode.getAttribute('value');
+			if (coord != null) {
+				if (units == 'mm') {
+					textNode = document.createTextNode(coordToMM(coord));
+					coordNode.appendChild(textNode);
+				} else if (units == 'mil') {
+					textNode = document.createTextNode(coordToMils(coord));		
+					coordNode.appendChild(textNode);	
+				}
+			}
+		}
+	
+		function convertUnits(unitNode, units) {
+			for (var i = 0; i < unitNode.childNodes.length; i++) {
+				unitNode.removeChild(unitNode.childNodes[i]);		
+			}
+		
+			textNode = document.createTextNode(units); 
+			unitNode.appendChild(textNode);
+		}
+	
+		function changeUnits(radio_input, units) {
+			if (radio_input.checked) {
+			
+				var elements = document.getElementsByName('coordinate');
+				if (elements) {
+					for (var i = 0; i < elements.length; i++) {
+						convertCoord(elements[i], units);
+					}
+				}
+	
+				var elements = document.getElementsByName('units');
+				if (elements) {
+					for (var i = 0; i < elements.length; i++) {
+						convertUnits(elements[i], units);
+					}
+				}
+			}
+		}
+	</script><title>Design Rule Verification Report</title>
+</head>
+<body onload=""><img ALT="Altium" src="
+			file://C:\Users\Public\Documents\Altium\AD25\Templates\AD_logo.png
+		"><h1>Design Rule Verification Report</h1>
+<table class="header_holder">
+<td class="column1">
+<table class="front_matter">
+<tr class="front_matter">
+<td class="front_matter_column1">Date:</td>
+<td class="front_matter_column2"></td>
+<td class="front_matter_column3">6/11/2026</td>
+</tr>
+<tr class="front_matter">
+<td class="front_matter_column1">Time:</td>
+<td class="front_matter_column2"></td>
+<td class="front_matter_column3">10:35:51 PM</td>
+</tr>
+<tr class="front_matter">
+<td class="front_matter_column1">Elapsed Time:</td>
+<td class="front_matter_column2"></td>
+<td class="front_matter_column3">00:00:00</td>
+</tr>
+<tr class="front_matter">
+<td class="front_matter_column1">Filename:</td>
+<td class="front_matter_column2"></td>
+<td class="front_matter_column3"><a href="file:///C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc" class="file"><acronym title="C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc">C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc</acronym></a></td>
+</tr>
+</table>
+</td>
+<td class="column2">
+<table class="DRC_summary_header">
+<tr>
+<td class="DRC_summary_header_col1">Warnings:</td>
+<td class="DRC_summary_header_col2"></td>
+<td class="DRC_summary_header_col3" style="color : red">1</td></tr>
+<tr>
+<td class="DRC_summary_header_col1">Rule Violations:</td>
+<td class="DRC_summary_header_col2"></td>
+<td class="DRC_summary_header_col3" style="color : red">138</td></tr>
+</table>
+</td>
+</table><a name="IDAXHWLPJ5OFPZJ51KDU3FL0SQLBRJSW2FYECYL3FIBFXBZHMZB40L"><h2>Summary</h2></a><table>
+<tr>
+<th class="column1">Warnings</th>
+<th class="column2">Count</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDUKC51G4WP2DWGYOQENDCUDIY2FCSZWMSKUD4QROC0TQA51RLNKXO">Drilled SMT Pads found</a></td>
+<td class="column2">1</td>
+</tr>
+<tr>
+<td style="font-weight : bold; text-align : right" class="column1">Total</td>
+<td style="font-weight : bold" class="column2">1</td>
+</tr>
+</table><br><table>
+<tr>
+<th class="column1">Rule Violations</th>
+<th class="column2">Count</th>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDH30XQRK1WV23KIIXEGWLUQ4GKELJVKRNFWK0D4LQL4MBKF0H11NB">Clearance Constraint (Gap=0.203mm) (OnLayer('Bottom Layer')),(All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#ID3MCVFTCF44RSJLEHPXNTT0TI0ERAXKZYVZGDXYOEKF5LQQFKNZOF">Clearance Constraint (Gap=0.203mm) (OnLayer('Top Layer')),(All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDRVDTKV5VGGJWLL1GAYE1AEGLBI2LOKLI23XYNIIS0UQWRF3VGO1C">Clearance Constraint (Gap=0.2mm) (All),(All)</a></td>
+<td class="column2">13</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDFWIEKKPZHVFSDPUHLZIY4P04TGYMOJSODS053NOUNERTN21GEZXL">Clearance Constraint (Gap=0.2mm) (All),(All)</a></td>
+<td class="column2">36</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDD2V00ZASUI4KPNGMJOUD1Z3LKBV4BWAAAPPGQGEB3IOGTXYQDVCM">Short-Circuit Constraint (Allowed=No) (All),(All)</a></td>
+<td class="column2">8</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDACHSCWNSXOMNHQ2BRPVSGB0LKNKM0X504QQCO0INP0OGHE0DAUMP">Un-Routed Net Constraint ( (All) )</a></td>
+<td class="column2">6</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDDEHEQO1FRDLLNJZZPTYSYAH0VM3QN40TZW21WPCMVQYNYQWX2Q2L">Modified Polygon (Allow modified: No), (Allow shelved: No)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDGNU4NFEEYHCTPWVT2NXC3URZYNVMRZI0YBIRAGDQLCY550LOUTHP">Width Constraint (Min=0.089mm) (Max=2.54mm) (Preferred=0.381mm) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDXQ5YS4YEIO0NEWK1RN223EO1PD5U2KI0PA2TX33ERTVPYVL3CO">Routing Topology Rule(Topology=Shortest) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDVCHGMYGMCZZSD5BRS0DNSWMNXI3EDWCD415ULONAMRO4WSWAOMAM">Power Plane Connect Rule(Relief Connect )(Expansion=0.508mm) (Conductor Width=0.254mm) (Air Gap=0.254mm) (Entries=4) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#ID0COO3IFVZ5EDJXTFWYFLEOI01JI4YM303C42VTACEZCL0XPN33E">Minimum Annular Ring (Minimum=0.13mm) (All)</a></td>
+<td class="column2">35</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDDJDO1MALVXETNASEEFAJXIKSDKQBGXHUZABTKRDDTWY3XNXIM1RM">Hole Size Constraint (Min=0.2mm) (Max=6.3mm) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDNYG3SBMICFE4MIPBG243I3HAPKJCS3SCMWBWAIKEGZBT2DYLWHNC">Hole To Hole Clearance (Gap=0.254mm) (All),(All)</a></td>
+<td class="column2">4</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#ID4PDCJGN2WMSJHIPQCVJ0QDPOVILCBGTDPAQWHFVHJCLLP44E4RJ">Minimum Solder Mask Sliver (Gap=0.1mm) (All),(All)</a></td>
+<td class="column2">17</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDICHIADJUA5Z1J1WZR0U30TFKEE1ZKNTY3PDKODRAJPKOCVQY5ZI">Silk To Solder Mask (Clearance=0.1mm) (IsPad),(All)</a></td>
+<td class="column2">4</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDKBW13W3E3YLSKKE30EBRZ5TWKPQACQ4XF1PQIVFSMX4TUDF2MKRC">Silk to Silk (Clearance=0.1mm) (All),(All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDWSFRLRHX0VDNDS00ENYSBDHUMBUC4BYPVKGFGYBD0XQJ0AHPBQSD">Net Antennae (Tolerance=0mm) (All)</a></td>
+<td class="column2">8</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDEDAKL2WQ4OUIDS1CR5EPIR4Q0E1133GNKQVKYGESX5HSMX3OKTAP">Board Clearance Constraint (Gap=0mm) (All)</a></td>
+<td class="column2">7</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDPNGUIVICZL0ONHSUGM31TMUEOMAFFGPBCEOKI1LXNJHFVKVN2OXE">Height Constraint (Min=0mm) (Max=25.4mm) (Prefered=12.7mm) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr>
+<td style="font-weight : bold; text-align : right" class="column1">Total</td>
+<td style="font-weight : bold" class="column2">138</td>
+</tr>
+</table><br><a name="IDLRAMVWL05VAAGSRBFEQBKQEO1XZ2EULAFYGZ4G0L5JJEPFDNB1F"><h2>Warnings</h2></a><a name="IDUKC51G4WP2DWGYOQENDCUDIY2FCSZWMSKUD4QROC0TQA51RLNKXO"><table>
+<tr>
+<th style="text-align : left" colspan="1" class="warning">Drilled SMT Pads found</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2235.189mil|Location2.X=2266.811mil|Location1.Y=3204.331mil|Location2.Y=3235.559mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2235.189mil|Location2.X=2266.811mil|Location1.Y=3204.331mil|Location2.Y=3235.559mil|Absolute=True">Pad C14-1(34.696mm,56.387mm) on Signal Top</acronym></a></td>
+</tr>
+</table></a><hr color="#EEEEEE"><a href="#top" style="font-size: 0.9em">Back to top</a><br><br><a href="dxpprocess://PCB:RunConvertDrilledSMTPadsToMultilayer?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;" class="callback"><acronym title="dxpprocess://PCB:RunConvertDrilledSMTPadsToMultilayer?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;">Convert Found Drilled SMT Pads to MultiLayer Pads</acronym></a><a name="IDRVDTKV5VGGJWLL1GAYE1AEGLBI2LOKLI23XYNIIS0UQWRF3VGO1C"><table>
+<tr>
+<th style="text-align : left" colspan="1" class="rule">Clearance Constraint (Gap=0.2mm) (All),(All)</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1648.784mil|Location2.X=1653.118mil|Location1.Y=1709.643mil|Location2.Y=1713.976mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1648.784mil|Location2.X=1653.118mil|Location1.Y=1709.643mil|Location2.Y=1713.976mil|Absolute=True">Clearance Constraint: (Collision &lt; 0.127mm) Between Pad U1-15(19.849mm,18.474mm) on Signal Top And Via (19.455mm,18.08mm) from Signal Top to Signal Bottom </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1648.785mil|Location2.X=1653.119mil|Location1.Y=1740.643mil|Location2.Y=1744.977mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1648.785mil|Location2.X=1653.119mil|Location1.Y=1740.643mil|Location2.Y=1744.977mil|Absolute=True">Clearance Constraint: (Collision &lt; 0.127mm) Between Pad U1-15(19.849mm,18.474mm) on Signal Top And Via (19.455mm,18.867mm) from Signal Top to Signal Bottom </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1679.784mil|Location2.X=1684.118mil|Location1.Y=1709.643mil|Location2.Y=1713.976mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1679.784mil|Location2.X=1684.118mil|Location1.Y=1709.643mil|Location2.Y=1713.976mil|Absolute=True">Clearance Constraint: (Collision &lt; 0.127mm) Between Pad U1-15(19.849mm,18.474mm) on Signal Top And Via (20.243mm,18.08mm) from Signal Top to Signal Bottom </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1679.784mil|Location2.X=1684.118mil|Location1.Y=1740.643mil|Location2.Y=1744.976mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1679.784mil|Location2.X=1684.118mil|Location1.Y=1740.643mil|Location2.Y=1744.976mil|Absolute=True">Clearance Constraint: (Collision &lt; 0.127mm) Between Pad U1-15(19.849mm,18.474mm) on Signal Top And Via (20.243mm,18.867mm) from Signal Top to Signal Bottom </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1589.525mil|Location2.X=1593.859mil|Location1.Y=3901.377mil|Location2.Y=3905.711mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1589.525mil|Location2.X=1593.859mil|Location1.Y=3901.377mil|Location2.Y=3905.711mil|Absolute=True">Clearance Constraint: (Collision &lt; 0.127mm) Between Pad X1-41(17.931mm,73.74mm) on Signal Top And Via (17.95mm,73.75mm) from Signal Top to Signal Bottom </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1589.525mil|Location2.X=1593.859mil|Location1.Y=3956.495mil|Location2.Y=3960.829mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1589.525mil|Location2.X=1593.859mil|Location1.Y=3956.495mil|Location2.Y=3960.829mil|Absolute=True">Clearance Constraint: (Collision &lt; 0.127mm) Between Pad X1-42(17.931mm,75.14mm) on Signal Top And Via (17.95mm,75.15mm) from Signal Top to Signal Bottom </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1534.407mil|Location2.X=1538.741mil|Location1.Y=3956.495mil|Location2.Y=3960.829mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1534.407mil|Location2.X=1538.741mil|Location1.Y=3956.495mil|Location2.Y=3960.829mil|Absolute=True">Clearance Constraint: (Collision &lt; 0.127mm) Between Pad X1-43(16.531mm,75.14mm) on Signal Top And Via (16.55mm,75.15mm) from Signal Top to Signal Bottom </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1534.407mil|Location2.X=1538.741mil|Location1.Y=3901.377mil|Location2.Y=3905.711mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1534.407mil|Location2.X=1538.741mil|Location1.Y=3901.377mil|Location2.Y=3905.711mil|Absolute=True">Clearance Constraint: (Collision &lt; 0.127mm) Between Pad X1-44(16.531mm,73.74mm) on Signal Top And Via (16.55mm,73.75mm) from Signal Top to Signal Bottom </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1532.439mil|Location2.X=1536.773mil|Location1.Y=3846.259mil|Location2.Y=3850.593mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1532.439mil|Location2.X=1536.773mil|Location1.Y=3846.259mil|Location2.Y=3850.593mil|Absolute=True">Clearance Constraint: (Collision &lt; 0.127mm) Between Pad X1-45(16.531mm,72.34mm) on Signal Top And Via (16.5mm,72.35mm) from Signal Top to Signal Bottom </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1589.525mil|Location2.X=1593.859mil|Location1.Y=3846.259mil|Location2.Y=3850.593mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1589.525mil|Location2.X=1593.859mil|Location1.Y=3846.259mil|Location2.Y=3850.593mil|Absolute=True">Clearance Constraint: (Collision &lt; 0.127mm) Between Pad X1-46(17.931mm,72.34mm) on Signal Top And Via (17.95mm,72.35mm) from Signal Top to Signal Bottom </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1642.675mil|Location2.X=1647.009mil|Location1.Y=3846.259mil|Location2.Y=3850.593mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1642.675mil|Location2.X=1647.009mil|Location1.Y=3846.259mil|Location2.Y=3850.593mil|Absolute=True">Clearance Constraint: (Collision &lt; 0.127mm) Between Pad X1-47(19.331mm,72.34mm) on Signal Top And Via (19.3mm,72.35mm) from Signal Top to Signal Bottom </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1644.645mil|Location2.X=1648.979mil|Location1.Y=3899.407mil|Location2.Y=3903.741mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1644.645mil|Location2.X=1648.979mil|Location1.Y=3899.407mil|Location2.Y=3903.741mil|Absolute=True">Clearance Constraint: (Collision &lt; 0.127mm) Between Pad X1-48(19.331mm,73.74mm) on Signal Top And Via (19.35mm,73.7mm) from Signal Top to Signal Bottom </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1644.645mil|Location2.X=1648.979mil|Location1.Y=3956.495mil|Location2.Y=3960.829mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1644.645mil|Location2.X=1648.979mil|Location1.Y=3956.495mil|Location2.Y=3960.829mil|Absolute=True">Clearance Constraint: (Collision &lt; 0.127mm) Between Pad X1-49(19.331mm,75.14mm) on Signal Top And Via (19.35mm,75.15mm) from Signal Top to Signal Bottom </acronym></a><br></td>
+</tr>
+</table></a><hr color="#EEEEEE"><a href="#top" style="font-size: 0.9em">Back to top</a><br><br><a name="IDFWIEKKPZHVFSDPUHLZIY4P04TGYMOJSODS053NOUNERTN21GEZXL"><table>
+<tr>
+<th style="text-align : left" colspan="1" class="rule">Clearance Constraint (Gap=0.2mm) (All),(All)</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1590.216mil|Location2.X=1611.151mil|Location1.Y=1224.769mil|Location2.Y=1257.121mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1590.216mil|Location2.X=1611.151mil|Location1.Y=1224.769mil|Location2.Y=1257.121mil|Absolute=True">Clearance Constraint: (0.2mm &lt; 0.5mm) Between Pad J12-A1(17.753mm,6.265mm) on Multi-Layer And Pad J12-A4(18.603mm,6.265mm) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1791.003mil|Location2.X=1811.938mil|Location1.Y=1224.769mil|Location2.Y=1257.121mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1791.003mil|Location2.X=1811.938mil|Location1.Y=1224.769mil|Location2.Y=1257.121mil|Absolute=True">Clearance Constraint: (0.2mm &lt; 0.5mm) Between Pad J12-A12(23.703mm,6.265mm) on Multi-Layer And Pad J12-A9(22.853mm,6.265mm) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1623.68mil|Location2.X=1644.615mil|Location1.Y=1224.769mil|Location2.Y=1257.121mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1623.68mil|Location2.X=1644.615mil|Location1.Y=1224.769mil|Location2.Y=1257.121mil|Absolute=True">Clearance Constraint: (0.2mm &lt; 0.5mm) Between Pad J12-A4(18.603mm,6.265mm) on Multi-Layer And Pad J12-A5(19.453mm,6.265mm) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1657.145mil|Location2.X=1678.08mil|Location1.Y=1224.769mil|Location2.Y=1257.121mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1657.145mil|Location2.X=1678.08mil|Location1.Y=1224.769mil|Location2.Y=1257.121mil|Absolute=True">Clearance Constraint: (0.2mm &lt; 0.5mm) Between Pad J12-A5(19.453mm,6.265mm) on Multi-Layer And Pad J12-A6(20.303mm,6.265mm) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1690.609mil|Location2.X=1711.544mil|Location1.Y=1224.769mil|Location2.Y=1257.121mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1690.609mil|Location2.X=1711.544mil|Location1.Y=1224.769mil|Location2.Y=1257.121mil|Absolute=True">Clearance Constraint: (0.2mm &lt; 0.5mm) Between Pad J12-A6(20.303mm,6.265mm) on Multi-Layer And Pad J12-A7(21.153mm,6.265mm) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1724.074mil|Location2.X=1745.009mil|Location1.Y=1224.769mil|Location2.Y=1257.121mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1724.074mil|Location2.X=1745.009mil|Location1.Y=1224.769mil|Location2.Y=1257.121mil|Absolute=True">Clearance Constraint: (0.2mm &lt; 0.5mm) Between Pad J12-A7(21.153mm,6.265mm) on Multi-Layer And Pad J12-A8(22.003mm,6.265mm) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1757.538mil|Location2.X=1778.473mil|Location1.Y=1224.769mil|Location2.Y=1257.121mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1757.538mil|Location2.X=1778.473mil|Location1.Y=1224.769mil|Location2.Y=1257.121mil|Absolute=True">Clearance Constraint: (0.2mm &lt; 0.5mm) Between Pad J12-A8(22.003mm,6.265mm) on Multi-Layer And Pad J12-A9(22.853mm,6.265mm) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1791.003mil|Location2.X=1811.938mil|Location1.Y=1171.619mil|Location2.Y=1203.971mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1791.003mil|Location2.X=1811.938mil|Location1.Y=1171.619mil|Location2.Y=1203.971mil|Absolute=True">Clearance Constraint: (0.2mm &lt; 0.5mm) Between Pad J12-B1(23.703mm,4.915mm) on Multi-Layer And Pad J12-B4(22.853mm,4.915mm) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1590.216mil|Location2.X=1611.151mil|Location1.Y=1171.619mil|Location2.Y=1203.971mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1590.216mil|Location2.X=1611.151mil|Location1.Y=1171.619mil|Location2.Y=1203.971mil|Absolute=True">Clearance Constraint: (0.2mm &lt; 0.5mm) Between Pad J12-B12(17.753mm,4.915mm) on Multi-Layer And Pad J12-B9(18.603mm,4.915mm) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1757.538mil|Location2.X=1778.473mil|Location1.Y=1171.619mil|Location2.Y=1203.971mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1757.538mil|Location2.X=1778.473mil|Location1.Y=1171.619mil|Location2.Y=1203.971mil|Absolute=True">Clearance Constraint: (0.2mm &lt; 0.5mm) Between Pad J12-B4(22.853mm,4.915mm) on Multi-Layer And Pad J12-B5(22.003mm,4.915mm) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1724.074mil|Location2.X=1745.009mil|Location1.Y=1171.619mil|Location2.Y=1203.971mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1724.074mil|Location2.X=1745.009mil|Location1.Y=1171.619mil|Location2.Y=1203.971mil|Absolute=True">Clearance Constraint: (0.2mm &lt; 0.5mm) Between Pad J12-B5(22.003mm,4.915mm) on Multi-Layer And Pad J12-B6(21.153mm,4.915mm) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1690.609mil|Location2.X=1711.544mil|Location1.Y=1171.619mil|Location2.Y=1203.971mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1690.609mil|Location2.X=1711.544mil|Location1.Y=1171.619mil|Location2.Y=1203.971mil|Absolute=True">Clearance Constraint: (0.2mm &lt; 0.5mm) Between Pad J12-B6(21.153mm,4.915mm) on Multi-Layer And Pad J12-B7(20.303mm,4.915mm) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1657.145mil|Location2.X=1678.08mil|Location1.Y=1171.619mil|Location2.Y=1203.971mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1657.145mil|Location2.X=1678.08mil|Location1.Y=1171.619mil|Location2.Y=1203.971mil|Absolute=True">Clearance Constraint: (0.2mm &lt; 0.5mm) Between Pad J12-B7(20.303mm,4.915mm) on Multi-Layer And Pad J12-B8(19.453mm,4.915mm) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1623.68mil|Location2.X=1644.615mil|Location1.Y=1171.619mil|Location2.Y=1203.971mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1623.68mil|Location2.X=1644.615mil|Location1.Y=1171.619mil|Location2.Y=1203.971mil|Absolute=True">Clearance Constraint: (0.2mm &lt; 0.5mm) Between Pad J12-B8(19.453mm,4.915mm) on Multi-Layer And Pad J12-B9(18.603mm,4.915mm) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1875.938mil|Location2.X=1885.062mil|Location1.Y=3277.438mil|Location2.Y=3286.562mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1875.938mil|Location2.X=1885.062mil|Location1.Y=3277.438mil|Location2.Y=3286.562mil|Absolute=True">Clearance Constraint: (0.051mm &lt; 0.2mm) Between Pad LED1-1(24.892mm,57.69mm) on Signal Top And Region (0 hole(s)) Signal Top </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1844.938mil|Location2.X=1854.062mil|Location1.Y=3303.438mil|Location2.Y=3312.562mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1844.938mil|Location2.X=1854.062mil|Location1.Y=3303.438mil|Location2.Y=3312.562mil|Absolute=True">Clearance Constraint: (0.051mm &lt; 0.2mm) Between Pad LED1-2(24.892mm,58.896mm) on Signal Top And Region (0 hole(s)) Signal Top </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1721.938mil|Location2.X=1731.062mil|Location1.Y=3377.938mil|Location2.Y=3387.062mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1721.938mil|Location2.X=1731.062mil|Location1.Y=3377.938mil|Location2.Y=3387.062mil|Absolute=True">Clearance Constraint: (0.051mm &lt; 0.2mm) Between Pad R9-1(21.704mm,60.96mm) on Signal Bottom And Region (0 hole(s)) Keep-Out Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1721.938mil|Location2.X=1731.062mil|Location1.Y=3379.938mil|Location2.Y=3389.062mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1721.938mil|Location2.X=1731.062mil|Location1.Y=3379.938mil|Location2.Y=3389.062mil|Absolute=True">Clearance Constraint: (0.051mm &lt; 0.2mm) Between Pad R9-1(21.704mm,60.96mm) on Signal Bottom And Region (0 hole(s)) Signal Bottom </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1688.938mil|Location2.X=1698.062mil|Location1.Y=3377.938mil|Location2.Y=3387.062mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1688.938mil|Location2.X=1698.062mil|Location1.Y=3377.938mil|Location2.Y=3387.062mil|Absolute=True">Clearance Constraint: (0.051mm &lt; 0.2mm) Between Pad R9-2(20.206mm,60.96mm) on Signal Bottom And Region (0 hole(s)) Keep-Out Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1688.938mil|Location2.X=1698.062mil|Location1.Y=3410.938mil|Location2.Y=3420.062mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1688.938mil|Location2.X=1698.062mil|Location1.Y=3410.938mil|Location2.Y=3420.062mil|Absolute=True">Clearance Constraint: (0.051mm &lt; 0.2mm) Between Pad R9-2(20.206mm,60.96mm) on Signal Bottom And Region (0 hole(s)) Signal Bottom </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1647.826mil|Location2.X=1654.076mil|Location1.Y=1708.685mil|Location2.Y=1714.934mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1647.826mil|Location2.X=1654.076mil|Location1.Y=1708.685mil|Location2.Y=1714.934mil|Absolute=True">Clearance Constraint: (Collision &lt; 0.2mm) Between Pad U1-15(19.849mm,18.474mm) on Signal Top And Pad U1-V(19.455mm,18.08mm) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1647.826mil|Location2.X=1654.076mil|Location1.Y=1739.685mil|Location2.Y=1745.934mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1647.826mil|Location2.X=1654.076mil|Location1.Y=1739.685mil|Location2.Y=1745.934mil|Absolute=True">Clearance Constraint: (Collision &lt; 0.2mm) Between Pad U1-15(19.849mm,18.474mm) on Signal Top And Pad U1-V(19.455mm,18.867mm) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1678.826mil|Location2.X=1685.076mil|Location1.Y=1708.685mil|Location2.Y=1714.934mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1678.826mil|Location2.X=1685.076mil|Location1.Y=1708.685mil|Location2.Y=1714.934mil|Absolute=True">Clearance Constraint: (Collision &lt; 0.2mm) Between Pad U1-15(19.849mm,18.474mm) on Signal Top And Pad U1-V(20.243mm,18.08mm) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1678.826mil|Location2.X=1685.076mil|Location1.Y=1739.685mil|Location2.Y=1745.934mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1678.826mil|Location2.X=1685.076mil|Location1.Y=1739.685mil|Location2.Y=1745.934mil|Absolute=True">Clearance Constraint: (Collision &lt; 0.2mm) Between Pad U1-15(19.849mm,18.474mm) on Signal Top And Pad U1-V(20.243mm,18.867mm) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1648.784mil|Location2.X=1653.118mil|Location1.Y=1709.643mil|Location2.Y=1713.976mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1648.784mil|Location2.X=1653.118mil|Location1.Y=1709.643mil|Location2.Y=1713.976mil|Absolute=True">Clearance Constraint: (Collision &lt; 0.127mm) Between Pad U1-V(19.455mm,18.08mm) on Multi-Layer And Via (19.455mm,18.08mm) from Signal Top to Signal Bottom </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1640.484mil|Location2.X=1672.836mil|Location1.Y=1714.342mil|Location2.Y=1735.277mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1640.484mil|Location2.X=1672.836mil|Location1.Y=1714.342mil|Location2.Y=1735.277mil|Absolute=True">Clearance Constraint: (0.406mm &lt; 0.5mm) Between Hole of Pad U1-V(19.455mm,18.08mm) on Multi-Layer And Via (19.455mm,18.867mm) from Signal Top to Signal Bottom </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1653.484mil|Location2.X=1674.418mil|Location1.Y=1689.924mil|Location2.Y=1722.277mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1653.484mil|Location2.X=1674.418mil|Location1.Y=1689.924mil|Location2.Y=1722.277mil|Absolute=True">Clearance Constraint: (0.406mm &lt; 0.5mm) Between Hole of Pad U1-V(19.455mm,18.08mm) on Multi-Layer And Via (20.243mm,18.08mm) from Signal Top to Signal Bottom </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1640.484mil|Location2.X=1672.836mil|Location1.Y=1719.342mil|Location2.Y=1740.277mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1640.484mil|Location2.X=1672.836mil|Location1.Y=1719.342mil|Location2.Y=1740.277mil|Absolute=True">Clearance Constraint: (0.406mm &lt; 0.5mm) Between Hole of Pad U1-V(19.455mm,18.867mm) on Multi-Layer And Via (19.455mm,18.08mm) from Signal Top to Signal Bottom </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1648.785mil|Location2.X=1653.119mil|Location1.Y=1740.643mil|Location2.Y=1744.977mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1648.785mil|Location2.X=1653.119mil|Location1.Y=1740.643mil|Location2.Y=1744.977mil|Absolute=True">Clearance Constraint: (Collision &lt; 0.127mm) Between Pad U1-V(19.455mm,18.867mm) on Multi-Layer And Via (19.455mm,18.867mm) from Signal Top to Signal Bottom </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1653.484mil|Location2.X=1674.418mil|Location1.Y=1720.924mil|Location2.Y=1753.277mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1653.484mil|Location2.X=1674.418mil|Location1.Y=1720.924mil|Location2.Y=1753.277mil|Absolute=True">Clearance Constraint: (0.406mm &lt; 0.5mm) Between Hole of Pad U1-V(19.455mm,18.867mm) on Multi-Layer And Via (20.243mm,18.867mm) from Signal Top to Signal Bottom </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1658.484mil|Location2.X=1679.418mil|Location1.Y=1689.924mil|Location2.Y=1722.277mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1658.484mil|Location2.X=1679.418mil|Location1.Y=1689.924mil|Location2.Y=1722.277mil|Absolute=True">Clearance Constraint: (0.406mm &lt; 0.5mm) Between Hole of Pad U1-V(20.243mm,18.08mm) on Multi-Layer And Via (19.455mm,18.08mm) from Signal Top to Signal Bottom </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1679.784mil|Location2.X=1684.118mil|Location1.Y=1709.643mil|Location2.Y=1713.976mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1679.784mil|Location2.X=1684.118mil|Location1.Y=1709.643mil|Location2.Y=1713.976mil|Absolute=True">Clearance Constraint: (Collision &lt; 0.127mm) Between Pad U1-V(20.243mm,18.08mm) on Multi-Layer And Via (20.243mm,18.08mm) from Signal Top to Signal Bottom </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1671.484mil|Location2.X=1703.836mil|Location1.Y=1714.342mil|Location2.Y=1735.277mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1671.484mil|Location2.X=1703.836mil|Location1.Y=1714.342mil|Location2.Y=1735.277mil|Absolute=True">Clearance Constraint: (0.406mm &lt; 0.5mm) Between Hole of Pad U1-V(20.243mm,18.08mm) on Multi-Layer And Via (20.243mm,18.867mm) from Signal Top to Signal Bottom </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1658.484mil|Location2.X=1679.419mil|Location1.Y=1732.342mil|Location2.Y=1764.695mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1658.484mil|Location2.X=1679.419mil|Location1.Y=1732.342mil|Location2.Y=1764.695mil|Absolute=True">Clearance Constraint: (0.406mm &lt; 0.5mm) Between Hole of Pad U1-V(20.243mm,18.867mm) on Multi-Layer And Via (19.455mm,18.867mm) from Signal Top to Signal Bottom </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1671.484mil|Location2.X=1703.836mil|Location1.Y=1719.342mil|Location2.Y=1740.277mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1671.484mil|Location2.X=1703.836mil|Location1.Y=1719.342mil|Location2.Y=1740.277mil|Absolute=True">Clearance Constraint: (0.406mm &lt; 0.5mm) Between Hole of Pad U1-V(20.243mm,18.867mm) on Multi-Layer And Via (20.243mm,18.08mm) from Signal Top to Signal Bottom </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1679.784mil|Location2.X=1684.118mil|Location1.Y=1740.643mil|Location2.Y=1744.976mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1679.784mil|Location2.X=1684.118mil|Location1.Y=1740.643mil|Location2.Y=1744.976mil|Absolute=True">Clearance Constraint: (Collision &lt; 0.127mm) Between Pad U1-V(20.243mm,18.867mm) on Multi-Layer And Via (20.243mm,18.867mm) from Signal Top to Signal Bottom </acronym></a><br></td>
+</tr>
+</table></a><hr color="#EEEEEE"><a href="#top" style="font-size: 0.9em">Back to top</a><br><br><a name="IDD2V00ZASUI4KPNGMJOUD1Z3LKBV4BWAAAPPGQGEB3IOGTXYQDVCM"><table>
+<tr>
+<th style="text-align : left" colspan="1" class="rule">Short-Circuit Constraint (Allowed=No) (All),(All)</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1635.187mil|Location2.X=1666.715mil|Location1.Y=1696.045mil|Location2.Y=1727.573mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1635.187mil|Location2.X=1666.715mil|Location1.Y=1696.045mil|Location2.Y=1727.573mil|Absolute=True">Short-Circuit Constraint: Between Pad U1-15(19.849mm,18.474mm) on Signal Top And Pad U1-V(19.455mm,18.08mm) on Multi-Layer Location : [X = 41.934mm][Y = 43.48mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1635.187mil|Location2.X=1666.715mil|Location1.Y=1727.045mil|Location2.Y=1758.573mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1635.187mil|Location2.X=1666.715mil|Location1.Y=1727.045mil|Location2.Y=1758.573mil|Absolute=True">Short-Circuit Constraint: Between Pad U1-15(19.849mm,18.474mm) on Signal Top And Pad U1-V(19.455mm,18.867mm) on Multi-Layer Location : [X = 41.934mm][Y = 44.267mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1666.187mil|Location2.X=1697.715mil|Location1.Y=1696.045mil|Location2.Y=1727.573mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1666.187mil|Location2.X=1697.715mil|Location1.Y=1696.045mil|Location2.Y=1727.573mil|Absolute=True">Short-Circuit Constraint: Between Pad U1-15(19.849mm,18.474mm) on Signal Top And Pad U1-V(20.243mm,18.08mm) on Multi-Layer Location : [X = 42.722mm][Y = 43.48mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1666.187mil|Location2.X=1697.715mil|Location1.Y=1727.045mil|Location2.Y=1758.573mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1666.187mil|Location2.X=1697.715mil|Location1.Y=1727.045mil|Location2.Y=1758.573mil|Absolute=True">Short-Circuit Constraint: Between Pad U1-15(19.849mm,18.474mm) on Signal Top And Pad U1-V(20.243mm,18.867mm) on Multi-Layer Location : [X = 42.722mm][Y = 44.267mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1635.187mil|Location2.X=1666.715mil|Location1.Y=1696.045mil|Location2.Y=1727.573mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1635.187mil|Location2.X=1666.715mil|Location1.Y=1696.045mil|Location2.Y=1727.573mil|Absolute=True">Short-Circuit Constraint: Between Pad U1-V(19.455mm,18.08mm) on Multi-Layer And Via (19.455mm,18.08mm) from Signal Top to Signal Bottom Location : [X = 41.934mm][Y = 43.48mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1635.188mil|Location2.X=1666.715mil|Location1.Y=1727.046mil|Location2.Y=1758.573mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1635.188mil|Location2.X=1666.715mil|Location1.Y=1727.046mil|Location2.Y=1758.573mil|Absolute=True">Short-Circuit Constraint: Between Pad U1-V(19.455mm,18.867mm) on Multi-Layer And Via (19.455mm,18.867mm) from Signal Top to Signal Bottom Location : [X = 41.934mm][Y = 44.267mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1666.187mil|Location2.X=1697.715mil|Location1.Y=1696.045mil|Location2.Y=1727.573mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1666.187mil|Location2.X=1697.715mil|Location1.Y=1696.045mil|Location2.Y=1727.573mil|Absolute=True">Short-Circuit Constraint: Between Pad U1-V(20.243mm,18.08mm) on Multi-Layer And Via (20.243mm,18.08mm) from Signal Top to Signal Bottom Location : [X = 42.722mm][Y = 43.48mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1666.187mil|Location2.X=1697.715mil|Location1.Y=1727.045mil|Location2.Y=1758.573mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1666.187mil|Location2.X=1697.715mil|Location1.Y=1727.045mil|Location2.Y=1758.573mil|Absolute=True">Short-Circuit Constraint: Between Pad U1-V(20.243mm,18.867mm) on Multi-Layer And Via (20.243mm,18.867mm) from Signal Top to Signal Bottom Location : [X = 42.722mm][Y = 44.267mm]</acronym></a><br></td>
+</tr>
+</table></a><hr color="#EEEEEE"><a href="#top" style="font-size: 0.9em">Back to top</a><br><br><a name="IDACHSCWNSXOMNHQ2BRPVSGB0LKNKM0X504QQCO0INP0OGHE0DAUMP"><table>
+<tr>
+<th style="text-align : left" colspan="1" class="rule">Un-Routed Net Constraint ( (All) )</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1675.143mil|Location2.X=2092.664mil|Location1.Y=3060.012mil|Location2.Y=3245.669mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1675.143mil|Location2.X=2092.664mil|Location1.Y=3060.012mil|Location2.Y=3245.669mil|Absolute=True">Un-Routed Net Constraint: Net 3.3V Between Track (22.344mm,55.13mm)(22.61mm,54.864mm) on Signal Top And Pad C13-2(28.135mm,54.5mm) on Signal Top </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1141.315mil|Location2.X=1510.811mil|Location1.Y=3188.526mil|Location2.Y=3255.896mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1141.315mil|Location2.X=1510.811mil|Location1.Y=3188.526mil|Location2.Y=3255.896mil|Absolute=True">Un-Routed Net Constraint: Net 3.3V Between Pad J11-2(7.366mm,56.444mm) on Multi-Layer And Via (15.494mm,56.134mm) from Signal Top to Signal Bottom </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1567.156mil|Location2.X=1689.567mil|Location1.Y=1117.677mil|Location2.Y=1210.299mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1567.156mil|Location2.X=1689.567mil|Location1.Y=1117.677mil|Location2.Y=1210.299mil|Absolute=True">Un-Routed Net Constraint: Net GND Between Pad J12-B12(17.753mm,4.915mm) on Multi-Layer And Pad R13-1(19.939mm,3.556mm) on Signal Bottom </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1504.232mil|Location2.X=1730.315mil|Location1.Y=3090.157mil|Location2.Y=3259.646mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1504.232mil|Location2.X=1730.315mil|Location1.Y=3090.157mil|Location2.Y=3259.646mil|Absolute=True">Un-Routed Net Constraint: Net 3.3V Between Pad U3-3(18.269mm,55.63mm) on Signal Top And Track (18.796mm,54.72mm)(18.931mm,54.855mm) on Signal Top </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=971.614mil|Location2.X=2306.26mil|Location1.Y=3066.929mil|Location2.Y=4185.039mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=971.614mil|Location2.X=2306.26mil|Location1.Y=3066.929mil|Location2.Y=4185.039mil|Absolute=True">Un-Routed Net Constraint: Polygon  (NONET_L04_P-001) on PWR Dead Copper - Net Not Assigned.</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1459.189mil|Location2.X=1510.811mil|Location1.Y=3194.189mil|Location2.Y=3345.811mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1459.189mil|Location2.X=1510.811mil|Location1.Y=3194.189mil|Location2.Y=3345.811mil|Absolute=True">Un-Routed Net Constraint: Net 3.3V Between Via (14.986mm,59.182mm) from Signal Top to Signal Bottom And Via (15.494mm,56.134mm) from Signal Top to Signal Bottom </acronym></a><br></td>
+</tr>
+</table></a><hr color="#EEEEEE"><a href="#top" style="font-size: 0.9em">Back to top</a><br><br><a name="ID0COO3IFVZ5EDJXTFWYFLEOI01JI4YM303C42VTACEZCL0XPN33E"><table>
+<tr>
+<th style="text-align : left" colspan="1" class="rule">Minimum Annular Ring (Minimum=0.13mm) (All)</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1580.767mil|Location2.X=1587.135mil|Location1.Y=1253.804mil|Location2.Y=1260.172mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1580.767mil|Location2.X=1587.135mil|Location1.Y=1253.804mil|Location2.Y=1260.172mil|Absolute=True">Minimum Annular Ring: (0.125mm &lt; 0.13mm) Pad J12-A1(17.753mm,6.265mm) on Multi-Layer (Annular Ring=0.125mm) On (Top Layer)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1815.019mil|Location2.X=1821.387mil|Location1.Y=1253.804mil|Location2.Y=1260.172mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1815.019mil|Location2.X=1821.387mil|Location1.Y=1253.804mil|Location2.Y=1260.172mil|Absolute=True">Minimum Annular Ring: (0.125mm &lt; 0.13mm) Pad J12-A12(23.703mm,6.265mm) on Multi-Layer (Annular Ring=0.125mm) On (Top Layer)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1614.231mil|Location2.X=1620.599mil|Location1.Y=1253.804mil|Location2.Y=1260.172mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1614.231mil|Location2.X=1620.599mil|Location1.Y=1253.804mil|Location2.Y=1260.172mil|Absolute=True">Minimum Annular Ring: (0.125mm &lt; 0.13mm) Pad J12-A4(18.603mm,6.265mm) on Multi-Layer (Annular Ring=0.125mm) On (Top Layer)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1647.696mil|Location2.X=1654.064mil|Location1.Y=1253.804mil|Location2.Y=1260.172mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1647.696mil|Location2.X=1654.064mil|Location1.Y=1253.804mil|Location2.Y=1260.172mil|Absolute=True">Minimum Annular Ring: (0.125mm &lt; 0.13mm) Pad J12-A5(19.453mm,6.265mm) on Multi-Layer (Annular Ring=0.125mm) On (Top Layer)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1681.16mil|Location2.X=1687.528mil|Location1.Y=1253.804mil|Location2.Y=1260.172mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1681.16mil|Location2.X=1687.528mil|Location1.Y=1253.804mil|Location2.Y=1260.172mil|Absolute=True">Minimum Annular Ring: (0.125mm &lt; 0.13mm) Pad J12-A6(20.303mm,6.265mm) on Multi-Layer (Annular Ring=0.125mm) On (Top Layer)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1714.625mil|Location2.X=1720.993mil|Location1.Y=1253.804mil|Location2.Y=1260.172mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1714.625mil|Location2.X=1720.993mil|Location1.Y=1253.804mil|Location2.Y=1260.172mil|Absolute=True">Minimum Annular Ring: (0.125mm &lt; 0.13mm) Pad J12-A7(21.153mm,6.265mm) on Multi-Layer (Annular Ring=0.125mm) On (Top Layer)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1748.09mil|Location2.X=1754.458mil|Location1.Y=1253.804mil|Location2.Y=1260.172mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1748.09mil|Location2.X=1754.458mil|Location1.Y=1253.804mil|Location2.Y=1260.172mil|Absolute=True">Minimum Annular Ring: (0.125mm &lt; 0.13mm) Pad J12-A8(22.003mm,6.265mm) on Multi-Layer (Annular Ring=0.125mm) On (Top Layer)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1781.554mil|Location2.X=1787.922mil|Location1.Y=1253.804mil|Location2.Y=1260.172mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1781.554mil|Location2.X=1787.922mil|Location1.Y=1253.804mil|Location2.Y=1260.172mil|Absolute=True">Minimum Annular Ring: (0.125mm &lt; 0.13mm) Pad J12-A9(22.853mm,6.265mm) on Multi-Layer (Annular Ring=0.125mm) On (Top Layer)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1815.019mil|Location2.X=1821.387mil|Location1.Y=1200.655mil|Location2.Y=1207.023mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1815.019mil|Location2.X=1821.387mil|Location1.Y=1200.655mil|Location2.Y=1207.023mil|Absolute=True">Minimum Annular Ring: (0.125mm &lt; 0.13mm) Pad J12-B1(23.703mm,4.915mm) on Multi-Layer (Annular Ring=0.125mm) On (Top Layer)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1580.767mil|Location2.X=1587.135mil|Location1.Y=1200.655mil|Location2.Y=1207.023mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1580.767mil|Location2.X=1587.135mil|Location1.Y=1200.655mil|Location2.Y=1207.023mil|Absolute=True">Minimum Annular Ring: (0.125mm &lt; 0.13mm) Pad J12-B12(17.753mm,4.915mm) on Multi-Layer (Annular Ring=0.125mm) On (Top Layer)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1781.554mil|Location2.X=1787.922mil|Location1.Y=1200.655mil|Location2.Y=1207.023mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1781.554mil|Location2.X=1787.922mil|Location1.Y=1200.655mil|Location2.Y=1207.023mil|Absolute=True">Minimum Annular Ring: (0.125mm &lt; 0.13mm) Pad J12-B4(22.853mm,4.915mm) on Multi-Layer (Annular Ring=0.125mm) On (Top Layer)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1748.09mil|Location2.X=1754.458mil|Location1.Y=1200.655mil|Location2.Y=1207.023mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1748.09mil|Location2.X=1754.458mil|Location1.Y=1200.655mil|Location2.Y=1207.023mil|Absolute=True">Minimum Annular Ring: (0.125mm &lt; 0.13mm) Pad J12-B5(22.003mm,4.915mm) on Multi-Layer (Annular Ring=0.125mm) On (Top Layer)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1714.625mil|Location2.X=1720.993mil|Location1.Y=1200.655mil|Location2.Y=1207.023mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1714.625mil|Location2.X=1720.993mil|Location1.Y=1200.655mil|Location2.Y=1207.023mil|Absolute=True">Minimum Annular Ring: (0.125mm &lt; 0.13mm) Pad J12-B6(21.153mm,4.915mm) on Multi-Layer (Annular Ring=0.125mm) On (Top Layer)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1681.16mil|Location2.X=1687.528mil|Location1.Y=1200.655mil|Location2.Y=1207.023mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1681.16mil|Location2.X=1687.528mil|Location1.Y=1200.655mil|Location2.Y=1207.023mil|Absolute=True">Minimum Annular Ring: (0.125mm &lt; 0.13mm) Pad J12-B7(20.303mm,4.915mm) on Multi-Layer (Annular Ring=0.125mm) On (Top Layer)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1647.696mil|Location2.X=1654.064mil|Location1.Y=1200.655mil|Location2.Y=1207.023mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1647.696mil|Location2.X=1654.064mil|Location1.Y=1200.655mil|Location2.Y=1207.023mil|Absolute=True">Minimum Annular Ring: (0.125mm &lt; 0.13mm) Pad J12-B8(19.453mm,4.915mm) on Multi-Layer (Annular Ring=0.125mm) On (Top Layer)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1614.231mil|Location2.X=1620.599mil|Location1.Y=1200.655mil|Location2.Y=1207.023mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1614.231mil|Location2.X=1620.599mil|Location1.Y=1200.655mil|Location2.Y=1207.023mil|Absolute=True">Minimum Annular Ring: (0.125mm &lt; 0.13mm) Pad J12-B9(18.603mm,4.915mm) on Multi-Layer (Annular Ring=0.125mm) On (Top Layer)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1647.767mil|Location2.X=1654.135mil|Location1.Y=1716.125mil|Location2.Y=1722.493mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1647.767mil|Location2.X=1654.135mil|Location1.Y=1716.125mil|Location2.Y=1722.493mil|Absolute=True">Minimum Annular Ring: (0.127mm &lt; 0.13mm) Pad U1-V(19.455mm,18.08mm) on Multi-Layer (Annular Ring=0.127mm) On (Top Layer)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1647.767mil|Location2.X=1654.135mil|Location1.Y=1747.125mil|Location2.Y=1753.493mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1647.767mil|Location2.X=1654.135mil|Location1.Y=1747.125mil|Location2.Y=1753.493mil|Absolute=True">Minimum Annular Ring: (0.127mm &lt; 0.13mm) Pad U1-V(19.455mm,18.867mm) on Multi-Layer (Annular Ring=0.127mm) On (Top Layer)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1678.767mil|Location2.X=1685.135mil|Location1.Y=1716.125mil|Location2.Y=1722.493mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1678.767mil|Location2.X=1685.135mil|Location1.Y=1716.125mil|Location2.Y=1722.493mil|Absolute=True">Minimum Annular Ring: (0.127mm &lt; 0.13mm) Pad U1-V(20.243mm,18.08mm) on Multi-Layer (Annular Ring=0.127mm) On (Top Layer)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1678.767mil|Location2.X=1685.135mil|Location1.Y=1747.125mil|Location2.Y=1753.493mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1678.767mil|Location2.X=1685.135mil|Location1.Y=1747.125mil|Location2.Y=1753.493mil|Absolute=True">Minimum Annular Ring: (0.127mm &lt; 0.13mm) Pad U1-V(20.243mm,18.867mm) on Multi-Layer (Annular Ring=0.127mm) On (Top Layer)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1533.39mil|Location2.X=1539.758mil|Location1.Y=3907.742mil|Location2.Y=3914.11mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1533.39mil|Location2.X=1539.758mil|Location1.Y=3907.742mil|Location2.Y=3914.11mil|Absolute=True">Minimum Annular Ring: (0.125mm &lt; 0.13mm) Via (16.55mm,73.75mm) from Signal Top to Signal Bottom (Annular Ring=0.125mm) On (Top Layer)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1533.39mil|Location2.X=1539.758mil|Location1.Y=3962.86mil|Location2.Y=3969.228mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1533.39mil|Location2.X=1539.758mil|Location1.Y=3962.86mil|Location2.Y=3969.228mil|Absolute=True">Minimum Annular Ring: (0.125mm &lt; 0.13mm) Via (16.55mm,75.15mm) from Signal Top to Signal Bottom (Annular Ring=0.125mm) On (Top Layer)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1531.422mil|Location2.X=1537.79mil|Location1.Y=3852.624mil|Location2.Y=3858.992mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1531.422mil|Location2.X=1537.79mil|Location1.Y=3852.624mil|Location2.Y=3858.992mil|Absolute=True">Minimum Annular Ring: (0.125mm &lt; 0.13mm) Via (16.5mm,72.35mm) from Signal Top to Signal Bottom (Annular Ring=0.125mm) On (Top Layer)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1588.508mil|Location2.X=1594.876mil|Location1.Y=3852.624mil|Location2.Y=3858.992mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1588.508mil|Location2.X=1594.876mil|Location1.Y=3852.624mil|Location2.Y=3858.992mil|Absolute=True">Minimum Annular Ring: (0.125mm &lt; 0.13mm) Via (17.95mm,72.35mm) from Signal Top to Signal Bottom (Annular Ring=0.125mm) On (Top Layer)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1588.508mil|Location2.X=1594.876mil|Location1.Y=3907.742mil|Location2.Y=3914.11mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1588.508mil|Location2.X=1594.876mil|Location1.Y=3907.742mil|Location2.Y=3914.11mil|Absolute=True">Minimum Annular Ring: (0.125mm &lt; 0.13mm) Via (17.95mm,73.75mm) from Signal Top to Signal Bottom (Annular Ring=0.125mm) On (Top Layer)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1588.508mil|Location2.X=1594.876mil|Location1.Y=3962.86mil|Location2.Y=3969.228mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1588.508mil|Location2.X=1594.876mil|Location1.Y=3962.86mil|Location2.Y=3969.228mil|Absolute=True">Minimum Annular Ring: (0.125mm &lt; 0.13mm) Via (17.95mm,75.15mm) from Signal Top to Signal Bottom (Annular Ring=0.125mm) On (Top Layer)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1643.628mil|Location2.X=1649.996mil|Location1.Y=3905.772mil|Location2.Y=3912.14mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1643.628mil|Location2.X=1649.996mil|Location1.Y=3905.772mil|Location2.Y=3912.14mil|Absolute=True">Minimum Annular Ring: (0.125mm &lt; 0.13mm) Via (19.35mm,73.7mm) from Signal Top to Signal Bottom (Annular Ring=0.125mm) On (Top Layer)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1643.628mil|Location2.X=1649.996mil|Location1.Y=3962.86mil|Location2.Y=3969.228mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1643.628mil|Location2.X=1649.996mil|Location1.Y=3962.86mil|Location2.Y=3969.228mil|Absolute=True">Minimum Annular Ring: (0.125mm &lt; 0.13mm) Via (19.35mm,75.15mm) from Signal Top to Signal Bottom (Annular Ring=0.125mm) On (Top Layer)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1641.658mil|Location2.X=1648.026mil|Location1.Y=3852.624mil|Location2.Y=3858.992mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1641.658mil|Location2.X=1648.026mil|Location1.Y=3852.624mil|Location2.Y=3858.992mil|Absolute=True">Minimum Annular Ring: (0.125mm &lt; 0.13mm) Via (19.3mm,72.35mm) from Signal Top to Signal Bottom (Annular Ring=0.125mm) On (Top Layer)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1647.767mil|Location2.X=1654.135mil|Location1.Y=1716.125mil|Location2.Y=1722.493mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1647.767mil|Location2.X=1654.135mil|Location1.Y=1716.125mil|Location2.Y=1722.493mil|Absolute=True">Minimum Annular Ring: (0.127mm &lt; 0.13mm) Via (19.455mm,18.08mm) from Signal Top to Signal Bottom (Annular Ring=0.127mm) On (Top Layer)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1647.768mil|Location2.X=1654.136mil|Location1.Y=1747.126mil|Location2.Y=1753.494mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1647.768mil|Location2.X=1654.136mil|Location1.Y=1747.126mil|Location2.Y=1753.494mil|Absolute=True">Minimum Annular Ring: (0.127mm &lt; 0.13mm) Via (19.455mm,18.867mm) from Signal Top to Signal Bottom (Annular Ring=0.127mm) On (Top Layer)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1678.767mil|Location2.X=1685.135mil|Location1.Y=1716.125mil|Location2.Y=1722.493mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1678.767mil|Location2.X=1685.135mil|Location1.Y=1716.125mil|Location2.Y=1722.493mil|Absolute=True">Minimum Annular Ring: (0.127mm &lt; 0.13mm) Via (20.243mm,18.08mm) from Signal Top to Signal Bottom (Annular Ring=0.127mm) On (Top Layer)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1678.767mil|Location2.X=1685.135mil|Location1.Y=1747.125mil|Location2.Y=1753.493mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1678.767mil|Location2.X=1685.135mil|Location1.Y=1747.125mil|Location2.Y=1753.493mil|Absolute=True">Minimum Annular Ring: (0.127mm &lt; 0.13mm) Via (20.243mm,18.867mm) from Signal Top to Signal Bottom (Annular Ring=0.127mm) On (Top Layer)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1077.816mil|Location2.X=1084.184mil|Location1.Y=4218.198mil|Location2.Y=4224.566mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1077.816mil|Location2.X=1084.184mil|Location1.Y=4218.198mil|Location2.Y=4224.566mil|Absolute=True">Minimum Annular Ring: (0.125mm &lt; 0.13mm) Via (4.978mm,81.636mm) from Signal Top to Signal Bottom (Annular Ring=0.125mm) On (Top Layer)</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1201.816mil|Location2.X=1208.184mil|Location1.Y=4220.198mil|Location2.Y=4226.566mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1201.816mil|Location2.X=1208.184mil|Location1.Y=4220.198mil|Location2.Y=4226.566mil|Absolute=True">Minimum Annular Ring: (0.125mm &lt; 0.13mm) Via (8.128mm,81.686mm) from Signal Top to Signal Bottom (Annular Ring=0.125mm) On (Top Layer)</acronym></a><br></td>
+</tr>
+</table></a><hr color="#EEEEEE"><a href="#top" style="font-size: 0.9em">Back to top</a><br><br><a name="IDNYG3SBMICFE4MIPBG243I3HAPKJCS3SCMWBWAIKEGZBT2DYLWHNC"><table>
+<tr>
+<th style="text-align : left" colspan="1" class="rule">Hole To Hole Clearance (Gap=0.254mm) (All),(All)</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1647.118mil|Location2.X=1654.784mil|Location1.Y=1707.976mil|Location2.Y=1715.642mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1647.118mil|Location2.X=1654.784mil|Location1.Y=1707.976mil|Location2.Y=1715.642mil|Absolute=True">Hole To Hole Clearance Constraint: (Collision &lt; 0.254mm) Between Pad U1-V(19.455mm,18.08mm) on Multi-Layer And Via (19.455mm,18.08mm) from Signal Top to Signal Bottom Pad/Via Touching Holes</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1647.119mil|Location2.X=1654.785mil|Location1.Y=1738.977mil|Location2.Y=1746.643mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1647.119mil|Location2.X=1654.785mil|Location1.Y=1738.977mil|Location2.Y=1746.643mil|Absolute=True">Hole To Hole Clearance Constraint: (Collision &lt; 0.254mm) Between Pad U1-V(19.455mm,18.867mm) on Multi-Layer And Via (19.455mm,18.867mm) from Signal Top to Signal Bottom Pad/Via Touching Holes</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1678.118mil|Location2.X=1685.784mil|Location1.Y=1707.976mil|Location2.Y=1715.642mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1678.118mil|Location2.X=1685.784mil|Location1.Y=1707.976mil|Location2.Y=1715.642mil|Absolute=True">Hole To Hole Clearance Constraint: (Collision &lt; 0.254mm) Between Pad U1-V(20.243mm,18.08mm) on Multi-Layer And Via (20.243mm,18.08mm) from Signal Top to Signal Bottom Pad/Via Touching Holes</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1678.118mil|Location2.X=1685.784mil|Location1.Y=1738.976mil|Location2.Y=1746.642mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1678.118mil|Location2.X=1685.784mil|Location1.Y=1738.976mil|Location2.Y=1746.642mil|Absolute=True">Hole To Hole Clearance Constraint: (Collision &lt; 0.254mm) Between Pad U1-V(20.243mm,18.867mm) on Multi-Layer And Via (20.243mm,18.867mm) from Signal Top to Signal Bottom Pad/Via Touching Holes</acronym></a><br></td>
+</tr>
+</table></a><hr color="#EEEEEE"><a href="#top" style="font-size: 0.9em">Back to top</a><br><br><a name="ID4PDCJGN2WMSJHIPQCVJ0QDPOVILCBGTDPAQWHFVHJCLLP44E4RJ"><table>
+<tr>
+<th style="text-align : left" colspan="1" class="rule">Minimum Solder Mask Sliver (Gap=0.1mm) (All),(All)</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1975.11mil|Location2.X=1980.297mil|Location1.Y=3207.786mil|Location2.Y=3212.973mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1975.11mil|Location2.X=1980.297mil|Location1.Y=3207.786mil|Location2.Y=3212.973mil|Absolute=True">Minimum Solder Mask Sliver Constraint: (0.017mm &lt; 0.1mm) Between Pad C12-1(27.35mm,56mm) on Signal Top And Pad C12-2(28.16mm,56mm) on Signal Top [Top Solder] Mask Sliver [0.017mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1972.787mil|Location2.X=1977.974mil|Location1.Y=3154.099mil|Location2.Y=3159.286mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1972.787mil|Location2.X=1977.974mil|Location1.Y=3154.099mil|Location2.Y=3159.286mil|Absolute=True">Minimum Solder Mask Sliver Constraint: (0.035mm &lt; 0.1mm) Between Pad C13-1(27.257mm,54.5mm) on Signal Top And Pad C13-2(28.135mm,54.5mm) on Signal Top [Top Solder] Mask Sliver [0.035mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2254.062mil|Location2.X=2259.249mil|Location1.Y=3201.407mil|Location2.Y=3206.593mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2254.062mil|Location2.X=2259.249mil|Location1.Y=3201.407mil|Location2.Y=3206.593mil|Absolute=True">Minimum Solder Mask Sliver Constraint: (0.017mm &lt; 0.1mm) Between Pad C14-1(34.696mm,56.387mm) on Signal Top And Pad C14-2(34.696mm,55.577mm) on Signal Top [Top Solder] Mask Sliver [0.017mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2132.407mil|Location2.X=2137.593mil|Location1.Y=4044.214mil|Location2.Y=4049.401mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2132.407mil|Location2.X=2137.593mil|Location1.Y=4044.214mil|Location2.Y=4049.401mil|Absolute=True">Minimum Solder Mask Sliver Constraint: (0.017mm &lt; 0.1mm) Between Pad C17-1(31.345mm,77.245mm) on Signal Top And Pad C17-2(32.155mm,77.245mm) on Signal Top [Top Solder] Mask Sliver [0.017mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1508.062mil|Location2.X=1513.249mil|Location1.Y=1452.351mil|Location2.Y=1457.538mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1508.062mil|Location2.X=1513.249mil|Location1.Y=1452.351mil|Location2.Y=1457.538mil|Absolute=True">Minimum Solder Mask Sliver Constraint: (0.017mm &lt; 0.1mm) Between Pad C6-1(15.748mm,11.961mm) on Signal Top And Pad C6-2(15.748mm,11.151mm) on Signal Top [Top Solder] Mask Sliver [0.017mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1677.341mil|Location2.X=1682.528mil|Location1.Y=1600.062mil|Location2.Y=1605.249mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1677.341mil|Location2.X=1682.528mil|Location1.Y=1600.062mil|Location2.Y=1605.249mil|Absolute=True">Minimum Solder Mask Sliver Constraint: (0.017mm &lt; 0.1mm) Between Pad C7-1(19.786mm,15.164mm) on Signal Top And Pad C7-2(20.596mm,15.164mm) on Signal Top [Top Solder] Mask Sliver [0.017mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1651.34mil|Location2.X=1656.526mil|Location1.Y=2137.407mil|Location2.Y=2142.593mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1651.34mil|Location2.X=1656.526mil|Location1.Y=2137.407mil|Location2.Y=2142.593mil|Absolute=True">Minimum Solder Mask Sliver Constraint: (0.067mm &lt; 0.1mm) Between Pad D2-A(17.805mm,28.93mm) on Signal Top And Via (20.066mm,28.956mm) from Signal Top to Signal Bottom [Top Solder] Mask Sliver [0.067mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1190.674mil|Location2.X=1195.861mil|Location1.Y=3672.233mil|Location2.Y=3677.42mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1190.674mil|Location2.X=1195.861mil|Location1.Y=3672.233mil|Location2.Y=3677.42mil|Absolute=True">Minimum Solder Mask Sliver Constraint: (0.047mm &lt; 0.1mm) Between Pad R10-1(8.255mm,67.564mm) on Signal Top And Pad R10-2(7.405mm,67.564mm) on Signal Top [Top Solder] Mask Sliver [0.047mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1457.58mil|Location2.X=1462.767mil|Location1.Y=3397.407mil|Location2.Y=3402.593mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1457.58mil|Location2.X=1462.767mil|Location1.Y=3397.407mil|Location2.Y=3402.593mil|Absolute=True">Minimum Solder Mask Sliver Constraint: (0.047mm &lt; 0.1mm) Between Pad R11-1(14.986mm,61.385mm) on Signal Top And Pad R11-2(14.986mm,60.535mm) on Signal Top [Top Solder] Mask Sliver [0.047mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1576.456mil|Location2.X=1581.643mil|Location1.Y=1695.188mil|Location2.Y=1700.375mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1576.456mil|Location2.X=1581.643mil|Location1.Y=1695.188mil|Location2.Y=1700.375mil|Absolute=True">Minimum Solder Mask Sliver Constraint: (0.08mm &lt; 0.1mm) Between Region (0 hole(s)) Top Solder And Region (0 hole(s)) Top Solder [Top Solder] Mask Sliver [0.08mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1712.283mil|Location2.X=1717.47mil|Location1.Y=1734.558mil|Location2.Y=1739.745mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1712.283mil|Location2.X=1717.47mil|Location1.Y=1734.558mil|Location2.Y=1739.745mil|Absolute=True">Minimum Solder Mask Sliver Constraint: (0.08mm &lt; 0.1mm) Between Region (0 hole(s)) Top Solder And Region (0 hole(s)) Top Solder [Top Solder] Mask Sliver [0.08mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1576.456mil|Location2.X=1581.643mil|Location1.Y=1734.558mil|Location2.Y=1739.745mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1576.456mil|Location2.X=1581.643mil|Location1.Y=1734.558mil|Location2.Y=1739.745mil|Absolute=True">Minimum Solder Mask Sliver Constraint: (0.08mm &lt; 0.1mm) Between Region (0 hole(s)) Top Solder And Region (0 hole(s)) Top Solder [Top Solder] Mask Sliver [0.08mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1712.283mil|Location2.X=1717.47mil|Location1.Y=1754.243mil|Location2.Y=1759.43mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1712.283mil|Location2.X=1717.47mil|Location1.Y=1754.243mil|Location2.Y=1759.43mil|Absolute=True">Minimum Solder Mask Sliver Constraint: (0.08mm &lt; 0.1mm) Between Region (0 hole(s)) Top Solder And Region (0 hole(s)) Top Solder [Top Solder] Mask Sliver [0.08mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1576.456mil|Location2.X=1581.643mil|Location1.Y=1754.243mil|Location2.Y=1759.43mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1576.456mil|Location2.X=1581.643mil|Location1.Y=1754.243mil|Location2.Y=1759.43mil|Absolute=True">Minimum Solder Mask Sliver Constraint: (0.08mm &lt; 0.1mm) Between Region (0 hole(s)) Top Solder And Region (0 hole(s)) Top Solder [Top Solder] Mask Sliver [0.08mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1712.283mil|Location2.X=1717.47mil|Location1.Y=1714.873mil|Location2.Y=1720.06mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1712.283mil|Location2.X=1717.47mil|Location1.Y=1714.873mil|Location2.Y=1720.06mil|Absolute=True">Minimum Solder Mask Sliver Constraint: (0.08mm &lt; 0.1mm) Between Region (0 hole(s)) Top Solder And Region (0 hole(s)) Top Solder [Top Solder] Mask Sliver [0.08mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1712.283mil|Location2.X=1717.47mil|Location1.Y=1695.188mil|Location2.Y=1700.375mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1712.283mil|Location2.X=1717.47mil|Location1.Y=1695.188mil|Location2.Y=1700.375mil|Absolute=True">Minimum Solder Mask Sliver Constraint: (0.08mm &lt; 0.1mm) Between Region (0 hole(s)) Top Solder And Region (0 hole(s)) Top Solder [Top Solder] Mask Sliver [0.08mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1576.456mil|Location2.X=1581.643mil|Location1.Y=1714.873mil|Location2.Y=1720.06mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1576.456mil|Location2.X=1581.643mil|Location1.Y=1714.873mil|Location2.Y=1720.06mil|Absolute=True">Minimum Solder Mask Sliver Constraint: (0.08mm &lt; 0.1mm) Between Region (0 hole(s)) Top Solder And Region (0 hole(s)) Top Solder [Top Solder] Mask Sliver [0.08mm]</acronym></a><br></td>
+</tr>
+</table></a><hr color="#EEEEEE"><a href="#top" style="font-size: 0.9em">Back to top</a><br><br><a name="IDICHIADJUA5Z1J1WZR0U30TFKEE1ZKNTY3PDKODRAJPKOCVQY5ZI"><table>
+<tr>
+<th style="text-align : left" colspan="1" class="rule">Silk To Solder Mask (Clearance=0.1mm) (IsPad),(All)</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1472.065mil|Location2.X=1477.253mil|Location1.Y=1741.816mil|Location2.Y=1747.003mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1472.065mil|Location2.X=1477.253mil|Location1.Y=1741.816mil|Location2.Y=1747.003mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.087mm &lt; 0.1mm) Between Pad C4-1(14.284mm,19.558mm) on Signal Top And Track (15.084mm,18.908mm)(15.384mm,18.908mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.087mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1472.065mil|Location2.X=1477.253mil|Location1.Y=1792.997mil|Location2.Y=1798.184mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1472.065mil|Location2.X=1477.253mil|Location1.Y=1792.997mil|Location2.Y=1798.184mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.087mm &lt; 0.1mm) Between Pad C4-1(14.284mm,19.558mm) on Signal Top And Track (15.084mm,20.208mm)(15.384mm,20.208mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.087mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1492.282mil|Location2.X=1497.469mil|Location1.Y=1741.816mil|Location2.Y=1747.003mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1492.282mil|Location2.X=1497.469mil|Location1.Y=1741.816mil|Location2.Y=1747.003mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.087mm &lt; 0.1mm) Between Pad C4-2(16.184mm,19.558mm) on Signal Top And Track (15.084mm,18.908mm)(15.384mm,18.908mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.087mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1492.282mil|Location2.X=1497.469mil|Location1.Y=1792.997mil|Location2.Y=1798.184mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1492.282mil|Location2.X=1497.469mil|Location1.Y=1792.997mil|Location2.Y=1798.184mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.087mm &lt; 0.1mm) Between Pad C4-2(16.184mm,19.558mm) on Signal Top And Track (15.084mm,20.208mm)(15.384mm,20.208mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.087mm]</acronym></a><br></td>
+</tr>
+</table></a><hr color="#EEEEEE"><a href="#top" style="font-size: 0.9em">Back to top</a><br><br><a name="IDWSFRLRHX0VDNDS00ENYSBDHUMBUC4BYPVKGFGYBD0XQJ0AHPBQSD"><table>
+<tr>
+<th style="text-align : left" colspan="1" class="rule">Net Antennae (Tolerance=0mm) (All)</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1455.689mil|Location2.X=1502.813mil|Location1.Y=3310.689mil|Location2.Y=3384.15mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1455.689mil|Location2.X=1502.813mil|Location1.Y=3310.689mil|Location2.Y=3384.15mil|Absolute=True">Net Antennae: Via (14.986mm,59.182mm) from Signal Top to Signal Bottom </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1475.689mil|Location2.X=1522.813mil|Location1.Y=3190.689mil|Location2.Y=3264.15mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1475.689mil|Location2.X=1522.813mil|Location1.Y=3190.689mil|Location2.Y=3264.15mil|Absolute=True">Net Antennae: Via (15.494mm,56.134mm) from Signal Top to Signal Bottom </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1633.451mil|Location2.X=1676.632mil|Location1.Y=1694.309mil|Location2.Y=1761.111mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1633.451mil|Location2.X=1676.632mil|Location1.Y=1694.309mil|Location2.Y=1761.111mil|Absolute=True">Net Antennae: Via (19.455mm,18.08mm) from Signal Top to Signal Bottom </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1633.452mil|Location2.X=1676.633mil|Location1.Y=1725.31mil|Location2.Y=1792.112mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1633.452mil|Location2.X=1676.633mil|Location1.Y=1725.31mil|Location2.Y=1792.112mil|Absolute=True">Net Antennae: Via (19.455mm,18.867mm) from Signal Top to Signal Bottom </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1664.451mil|Location2.X=1707.632mil|Location1.Y=1694.309mil|Location2.Y=1761.111mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1664.451mil|Location2.X=1707.632mil|Location1.Y=1694.309mil|Location2.Y=1761.111mil|Absolute=True">Net Antennae: Via (20.243mm,18.08mm) from Signal Top to Signal Bottom </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1664.451mil|Location2.X=1707.632mil|Location1.Y=1725.309mil|Location2.Y=1792.111mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1664.451mil|Location2.X=1707.632mil|Location1.Y=1725.309mil|Location2.Y=1792.111mil|Absolute=True">Net Antennae: Via (20.243mm,18.867mm) from Signal Top to Signal Bottom </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1740.689mil|Location2.X=1787.813mil|Location1.Y=3180.689mil|Location2.Y=3254.15mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1740.689mil|Location2.X=1787.813mil|Location1.Y=3180.689mil|Location2.Y=3254.15mil|Absolute=True">Net Antennae: Via (22.225mm,55.88mm) from Signal Top to Signal Bottom </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2039.689mil|Location2.X=2086.813mil|Location1.Y=3091.689mil|Location2.Y=3165.15mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2039.689mil|Location2.X=2086.813mil|Location1.Y=3091.689mil|Location2.Y=3165.15mil|Absolute=True">Net Antennae: Via (29.82mm,53.619mm) from Signal Top to Signal Bottom </acronym></a><br></td>
+</tr>
+</table></a><hr color="#EEEEEE"><a href="#top" style="font-size: 0.9em">Back to top</a><br><br><a name="IDEDAKL2WQ4OUIDS1CR5EPIR4Q0E1133GNKQVKYGESX5HSMX3OKTAP"><table>
+<tr>
+<th style="text-align : left" colspan="1" class="rule">Board Clearance Constraint (Gap=0mm) (All)</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1257.381mil|Location2.X=1266.255mil|Location1.Y=4578.027mil|Location2.Y=4586.901mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1257.381mil|Location2.X=1266.255mil|Location1.Y=4578.027mil|Location2.Y=4586.901mil|Absolute=True">Board Outline Clearance(Outline Edge): (Collision &lt; 0.3mm) Between Board Edge And Text "X1" (8.877mm,90.513mm) on Top Overlay </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1291.232mil|Location2.X=1300.106mil|Location1.Y=4384.342mil|Location2.Y=4393.217mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1291.232mil|Location2.X=1300.106mil|Location1.Y=4384.342mil|Location2.Y=4393.217mil|Absolute=True">Board Outline Clearance(Outline Edge): (Collision &lt; 0.3mm) Between Board Edge And Track (10.431mm,83.2mm)(10.431mm,88.95mm) on Top Overlay </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1645.563mil|Location2.X=1654.437mil|Location1.Y=4497.532mil|Location2.Y=4506.405mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1645.563mil|Location2.X=1654.437mil|Location1.Y=4497.532mil|Location2.Y=4506.405mil|Absolute=True">Board Outline Clearance(Outline Edge): (Collision &lt; 0.3mm) Between Board Edge And Track (10.431mm,88.95mm)(28.431mm,88.95mm) on Top Overlay </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1518.562mil|Location2.X=1531.623mil|Location1.Y=994.749mil|Location2.Y=1007.81mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1518.562mil|Location2.X=1531.623mil|Location1.Y=994.749mil|Location2.Y=1007.81mil|Absolute=True">Board Outline Clearance(Outline Edge): (0.065mm &lt; 0.3mm) Between Board Edge And Track (16.258mm,0.165mm)(16.258mm,0.515mm) on Top Overlay </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1518.562mil|Location2.X=1531.623mil|Location1.Y=994.749mil|Location2.Y=1007.81mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1518.562mil|Location2.X=1531.623mil|Location1.Y=994.749mil|Location2.Y=1007.81mil|Absolute=True">Board Outline Clearance(Outline Edge): (0.065mm &lt; 0.3mm) Between Board Edge And Track (16.258mm,0.165mm)(25.198mm,0.165mm) on Top Overlay </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1870.531mil|Location2.X=1883.591mil|Location1.Y=994.749mil|Location2.Y=1007.81mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1870.531mil|Location2.X=1883.591mil|Location1.Y=994.749mil|Location2.Y=1007.81mil|Absolute=True">Board Outline Clearance(Outline Edge): (0.065mm &lt; 0.3mm) Between Board Edge And Track (25.198mm,0.165mm)(25.198mm,0.515mm) on Top Overlay </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1999.894mil|Location2.X=2008.768mil|Location1.Y=4384.342mil|Location2.Y=4393.217mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\Public\Documents\Altium\Projects\Hermit_V1\Hermit_V1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1999.894mil|Location2.X=2008.768mil|Location1.Y=4384.342mil|Location2.Y=4393.217mil|Absolute=True">Board Outline Clearance(Outline Edge): (Collision &lt; 0.3mm) Between Board Edge And Track (28.431mm,83.2mm)(28.431mm,88.95mm) on Top Overlay </acronym></a><br></td>
+</tr>
+</table></a><hr color="#EEEEEE"><a href="#top" style="font-size: 0.9em">Back to top</a><br><br></body>
+</html>

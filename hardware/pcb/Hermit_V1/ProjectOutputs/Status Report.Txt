@@ -1,0 +1,24 @@
+Output: Gerber X2 Files
+Type  : GerberX2
+From  : Variant [[No Variations]] of Project [Hermit_V1.PrjPcb]
+   Generated File[Hermit_V1_Copper_Signal_Top.gbr]
+   Generated File[Hermit_V1_Copper_Signal_1.gbr]
+   Generated File[Hermit_V1_Copper_Signal_2.gbr]
+   Generated File[Hermit_V1_Copper_Signal_Bot.gbr]
+   Generated File[Hermit_V1_Legend_Top.gbr]
+   Generated File[Hermit_V1_Legend_Bot.gbr]
+   Generated File[Hermit_V1_Soldermask_Top.gbr]
+   Generated File[Hermit_V1_Soldermask_Bot.gbr]
+   Generated File[Hermit_V1_Paste_Top.gbr]
+   Generated File[Hermit_V1_Paste_Bot.gbr]
+   Generated File[Hermit_V1_Profile.gbr]
+   Generated File[Hermit_V1_NPTH_Drill.gbr]
+   Generated File[Hermit_V1_PTH_Drill.gbr]
+   Generated File[Hermit_V1.EXTREP]
+   Generated File[Hermit_V1.REP]
+
+
+Files Generated   : 15
+Documents Printed : 0
+
+Finished Output Generation At 10:42:34 PM On 6/11/2026
