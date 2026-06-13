@@ -76,7 +76,7 @@ static const int COMMAND_TABLE_SIZE = sizeof(COMMAND_TABLE) / sizeof(COMMAND_TAB
 // HARDWARE
 // ======================================================================
 
-Servo     servos[8];
+Servo servos[8];
 WebServer server(80);
 
 // ======================================================================
@@ -224,9 +224,9 @@ void handleRoot() {
 }
 
 // GET /cmd?c=<command>
-// Accepts any string from COMMAND_TABLE.
-// Movement states (walk/back/left/right) are held — caller re-sends while held.
-// Pose states run once and self-transition to STATE_IDLE via the .cpp functions.
+// Accepts any string from COMMAND_TABLE
+// Movement states (walk/back/left/right) are held — caller re-sends while held
+// Pose states run once and self-transition to STATE_IDLE once done
 void handleCmd() {
   if (!server.hasArg("c")) {
     server.send(400, "text/plain", "missing arg");
@@ -273,7 +273,7 @@ void handleStatus() {
 // HELPER FUNCTIONS
 // ======================================================================
 
-// Walks the lookup table and maps an input string to a MovementState.
+// Walks the lookup table and maps an input string to a MovementState
 bool parseMovementCommand(const char* str, MovementState& out) {
   for (int i = 0; i < COMMAND_TABLE_SIZE; i++) {
     if (strcmp(str, COMMAND_TABLE[i].str) == 0) {
@@ -284,7 +284,7 @@ bool parseMovementCommand(const char* str, MovementState& out) {
   return false;
 }
 
-// Handles all "subtrim ..." variants.
+// Handles all "subtrim ..." variants
 void handleSubtrimCommand(const char* buf) {
   if (strcmp(buf, "subtrim save") == 0) {
     Serial.println("Copy this into the code:");
@@ -320,7 +320,7 @@ void handleSubtrimCommand(const char* buf) {
   }
 }
 
-// Writes a servo angle, applying subtrim offset and clamping.
+// Writes a servo angle, applying subtrim offset and clamping
 void setServoAngle(uint8_t channel, int angle) {
   if (channel >= 8) return;
   int adjusted = constrain(angle + servoSubtrim[channel], 0, 180);
@@ -329,7 +329,7 @@ void setServoAngle(uint8_t channel, int angle) {
   delay(motorCurrentDelay);
 }
 
-// Reads and processes any pending serial bytes mid-animation.
+// Reads and processes any pending serial bytes mid-animation
 void checkSerial() {
   while (Serial.available()) {
     char c = Serial.read();

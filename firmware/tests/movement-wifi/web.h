@@ -3,7 +3,7 @@
 #include <Arduino.h>
 
 // ======================================================================
-// WEB INTERFACE
+// WEB SERVER INTERFACE
 // ======================================================================
 
 const char INDEX_HTML[] PROGMEM = R"rawliteral(

@@ -1,6 +1,9 @@
 #include "movement-sequences.h"
 
-// ---------- SERVO LOCATIONS ----------
+// ======================================================================
+// SERVO LOCATIONS
+// ======================================================================
+
 int servoNameToIndex(const String& servo) {
   if (servo == "L1") return L1;
   if (servo == "L2") return L2;
@@ -13,10 +16,11 @@ int servoNameToIndex(const String& servo) {
   return -1;
 }
 
-// ---------- STATIC POSES ----------
-// These run once and self-transition to STATE_IDLE so they don't
-// get called repeatedly by loop()'s switch dispatch.
+// ======================================================================
+// POSES
+// ======================================================================
 
+// ---------- STATIC POSES ----------
 void runRestPose() {
   Serial.println("REST");
   for (int i = 0; i < 8; i++) setServoAngle(i, 90);
@@ -37,9 +41,6 @@ void runStandPose() {
 }
 
 // ---------- ANIMATED POSES ----------
-// Each pose runs its full sequence, then returns to stand and 
-// sets STATE_IDLE so loop() stops re-invoking it.
-
 void runWavePose() {
   Serial.println("WAVE");
   runStandPose();

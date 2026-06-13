@@ -6,7 +6,6 @@
 // SERVO LAYOUT
 // ======================================================================
 
-// Physical location of each servo on Hermit
 enum ServoName : uint8_t {
   R1 = 0,
   R2 = 1,
