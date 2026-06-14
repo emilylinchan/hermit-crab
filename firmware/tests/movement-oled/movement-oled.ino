@@ -8,8 +8,6 @@
 #include "face-bitmaps.h"
 #include "web.h"
 
-// Install libraries Adafruit SSD1306 and Adafruit GFX
-
 // ======================================================================
 // CONFIGURATION
 // ======================================================================
@@ -18,25 +16,25 @@
 const char* AP_SSID       = "HermitCrab";
 const char* AP_PASS       = "12345678";   // NULL for open network
 const bool  AP_HIDDEN     = false;
-const unit8_t AP_MAX_CONN = 2;
+const uint8_t AP_MAX_CONN = 2;
 IPAddress AP_IP(192, 168, 0, 1);
 IPAddress AP_GATEWAY(192, 168, 0, 1);
 IPAddress AP_SUBNET(255, 255, 255, 0);
 
 // ---- Hardware ----
-const unit8_t OPERATING_FREQ = 50;
+const uint8_t OPERATING_FREQ = 50;
 
 const uint16_t OLED_WIDTH   = 128;
 const uint16_t OLED_HEIGHT  = 64;
-const unit8_t OLED_I2C_ADDR = 0x3C
+const uint8_t OLED_I2C_ADDR = 0x3C;
 const int8_t   OLED_RESET   = -1;  // -1 = share Arduino reset pin
 
-const unit8_t I2C_SDA = 21;
-const unit8_t I2C_SCL = 22;
+const uint8_t I2C_SDA = 21;
+const uint8_t I2C_SCL = 22;
 
 // Index:                     0   1   2   3   4   5   6   7
 // Label:                     R1  R2  L1  L2  R4  R3  L3  L4
-const unit8_t servoPins[8] = {13, 14, 22, 16, 17, 18, 19, 21};
+const uint8_t servoPins[8] = {13, 14, 23, 16, 17, 18, 19, 33};
 
 // ---- MG90D Pulse Calibration ----
 // Full travel: 500–2500 µs → 2000 µs span for 270°
@@ -110,7 +108,7 @@ struct FaceEntry {
 static const FaceEntry FACE_TABLE[] = {
   { STATE_IDLE,     epd_bitmap_idle      },
   { STATE_STAND,    epd_bitmap_stand     },
-  { STATE_REST,     epd_bitmap_sleepy    },
+  { STATE_REST,     epd_bitmap_rest    },
   { STATE_FORWARD,  epd_bitmap_walk      },
   { STATE_BACKWARD, epd_bitmap_walk      },
   { STATE_LEFT,     epd_bitmap_walk      },
@@ -222,6 +220,12 @@ void loop() {
 
   server.handleClient();
 
+  // ---- Update face on state change ----
+  if (currentCommand != lastDisplayedState) {
+    showFace(currentCommand);
+    lastDisplayedState = currentCommand;
+  }
+
   // ---- State Machine Dispatch ----
   switch (currentCommand) {
     case STATE_IDLE:                         break;
@@ -249,6 +253,39 @@ void loop() {
 
   // ---- Serial CLI ----
   checkSerial();
+}
+
+// ======================================================================
+// OLED SETUP & FACE DISPLAY
+// ======================================================================
+
+void setupOLED() {
+  if (!display.begin(SSD1306_SWITCHCAPVCC, OLED_I2C_ADDR)) {
+    Serial.println("SSD1306 not found — check wiring and I2C address");
+    // Robot continues to work without the display
+    return;
+  }
+  display.clearDisplay();
+  display.display();
+  Serial.println("OLED initialized");
+}
+
+void showFace(MovementState state) {
+  const unsigned char* bitmap = nullptr;
+
+  for (int i = 0; i < FACE_TABLE_SIZE; i++) {
+    if (FACE_TABLE[i].state == state) {
+      bitmap = FACE_TABLE[i].bitmap;
+      break;
+    }
+  }
+
+  // If no bitmap is mapped for this state (or bitmap is null), do nothing
+  if (bitmap == nullptr) return;
+
+  display.clearDisplay();
+  display.drawBitmap(0, 0, bitmap, OLED_WIDTH, OLED_HEIGHT, SSD1306_WHITE);
+  display.display();
 }
 
 // ======================================================================
