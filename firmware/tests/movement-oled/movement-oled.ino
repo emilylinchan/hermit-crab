@@ -108,7 +108,7 @@ struct FaceEntry {
 static const FaceEntry FACE_TABLE[] = {
   { STATE_IDLE,     epd_bitmap_idle      },
   { STATE_STAND,    epd_bitmap_stand     },
-  { STATE_REST,     epd_bitmap_rest    },
+  { STATE_REST,     epd_bitmap_rest      },
   { STATE_FORWARD,  epd_bitmap_walk      },
   { STATE_BACKWARD, epd_bitmap_walk      },
   { STATE_LEFT,     epd_bitmap_walk      },
@@ -229,7 +229,9 @@ void loop() {
   // ---- State Machine Dispatch ----
   switch (currentCommand) {
     case STATE_IDLE:                         break;
-    case STATE_STAND:    runStandPose();     break;
+    case STATE_STAND:    
+      runStandPose();     
+      currentCommand = STATE_IDLE;           break;
     case STATE_REST:     runRestPose();      break;
     case STATE_FORWARD:  runWalkPose();      break;
     case STATE_BACKWARD: runWalkBackward();  break;
@@ -353,6 +355,7 @@ void handleMotor() {
     server.send(400, "text/plain", "out of range");
     return;
   }
+  currentCommand = STATE_IDLE;   // stop any running animation first
   setServoAngle(idx, angle);
   server.send(200, "text/plain", "ok");
 }

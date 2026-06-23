@@ -192,11 +192,15 @@ const container = document.getElementById('motorSliders');
 LABELS.forEach((label, i) => {
   const row = document.createElement('div');
   row.className = 'motor-row';
+  const sendMotor = (el) => motorMove(i, el.value, el.nextElementSibling);
   row.innerHTML = `
     <label>S${i} ${label}</label>
     <input type="range" min="0" max="180" value="90"
-           oninput="motorMove(${i}, this.value, this.nextElementSibling)">
+           oninput="updateDisplay(${i}, this.value, this.nextElementSibling)">
     <span class="motor-val">90°</span>`;
+  const slider = row.querySelector('input');
+  slider.addEventListener('mouseup',  () => sendMotor(slider));
+  slider.addEventListener('touchend', () => sendMotor(slider));
   container.appendChild(row);
 });
 
@@ -220,10 +224,15 @@ function sendCmd(cmd) {
     .catch(() => document.getElementById('status').textContent = 'error');
 }
 
+function updateDisplay(idx, val, display) {
+  display.textContent = val + '°';       
+}
+
 function motorMove(idx, val, display) {
   display.textContent = val + '°';
-  fetch(`/motor?i=${idx}&a=${val}`).catch(()=>{});
+  fetch(`/motor?i=${idx}&a=${val}`).catch(() => {});
 }
+
 </script>
 </body>
 </html>

@@ -37,7 +37,6 @@ void runStandPose() {
   setServoAngle(R3, 180);
   setServoAngle(L3, 0);
   setServoAngle(L4, 180);
-  currentCommand = STATE_IDLE;
 }
 
 // ---------- ANIMATED POSES ----------
