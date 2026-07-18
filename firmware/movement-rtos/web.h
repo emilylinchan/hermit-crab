@@ -72,7 +72,7 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
       color: #fff;
       cursor: pointer;
       transition: background 0.1s, transform 0.1s;
-      touch-action: manipulation;
+      touch-action: none;
     }
     .dpad button:active { background: #3a5a3a; transform: scale(0.94); }
     .spacer { visibility: hidden; }
@@ -141,19 +141,11 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
   <div class="card-title">Movement</div>
   <div class="dpad">
     <div class="spacer"></div>
-    <button onmousedown="move('walk')"  onmouseup="sendCmd('stop')"
-            ontouchstart="event.preventDefault(); move('walk')"
-            ontouchend="event.preventDefault(); sendCmd('stop')">▲</button>
+    <button data-cmd="walk">▲</button>
     <div class="spacer"></div>
-    <button onmousedown="move('left')"  onmouseup="sendCmd('stop')"
-            ontouchstart="event.preventDefault(); move('left')"
-            ontouchend="event.preventDefault(); sendCmd('stop')">◀</button>
-    <button onmousedown="move('back')"  onmouseup="sendCmd('stop')"
-            ontouchstart="event.preventDefault(); move('back')"
-            ontouchend="event.preventDefault(); sendCmd('stop')">▼</button>
-    <button onmousedown="move('right')" onmouseup="sendCmd('stop')"
-            ontouchstart="event.preventDefault(); move('right')"
-            ontouchend="event.preventDefault(); sendCmd('stop')">▶</button>
+    <button data-cmd="left">◀</button>
+    <button data-cmd="back">▼</button>
+    <button data-cmd="right">▶</button>
   </div>
   <button class="btn-stop" onclick="sendCmd('stop')">■ STOP</button>
 </div>
@@ -203,8 +195,9 @@ LABELS.forEach((label, i) => {
            oninput="updateDisplay(${i}, this.value, this.nextElementSibling)">
     <span class="motor-val">90°</span>`;
   const slider = row.querySelector('input');
-  slider.addEventListener('mouseup',  () => sendMotor(slider));
-  slider.addEventListener('touchend', () => sendMotor(slider));
+  // 'change' fires on release no matter where the pointer ends up —
+  // unlike mouseup/touchend, which miss a drag that leaves the element
+  slider.addEventListener('change', () => sendMotor(slider));
   container.appendChild(row);
 });
 
@@ -228,6 +221,26 @@ function sendCmd(cmd) {
     .then(t => document.getElementById('status').textContent = t)
     .catch(() => document.getElementById('status').textContent = 'error');
 }
+
+// D-pad wiring. Pointer capture routes pointerup back to the button even
+// if the finger/cursor drifted off it, so 'stop' always fires
+document.querySelectorAll('.dpad button[data-cmd]').forEach(btn => {
+  btn.addEventListener('pointerdown', e => {
+    e.preventDefault();
+    btn.setPointerCapture(e.pointerId);
+    move(btn.dataset.cmd);
+  });
+  btn.addEventListener('pointerup',     () => sendCmd('stop'));
+  btn.addEventListener('pointercancel', () => sendCmd('stop'));
+});
+
+// Last-resort safety net: tab hidden or window loses focus mid-drive
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden && moveInterval) sendCmd('stop');
+});
+window.addEventListener('blur', () => {
+  if (moveInterval) sendCmd('stop');
+});
 
 // Poll the real state so the label reflects poses finishing on their own
 setInterval(() => {
