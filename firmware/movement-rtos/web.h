@@ -229,8 +229,16 @@ function sendCmd(cmd) {
     .catch(() => document.getElementById('status').textContent = 'error');
 }
 
+// Poll the real state so the label reflects poses finishing on their own
+setInterval(() => {
+  fetch('/status')
+    .then(r => r.json())
+    .then(s => document.getElementById('status').textContent = s.name)
+    .catch(() => {});
+}, 500);
+
 function updateDisplay(idx, val, display) {
-  display.textContent = val + '°';       
+  display.textContent = val + '°';
 }
 
 function motorMove(idx, val, display) {

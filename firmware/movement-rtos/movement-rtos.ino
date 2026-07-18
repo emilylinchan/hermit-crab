@@ -62,11 +62,13 @@ SemaphoreHandle_t servoMutex;
 SemaphoreHandle_t displayMutex;
 
 // ======================================================================
-// STATE MACHINE
+// MOVEMENT
 // ======================================================================
 
 volatile MovementState currentCommand = STATE_IDLE;
 QueueHandle_t commandQueue;
+
+volatile MovementState heldPose = STATE_IDLE;
 
 struct CommandEntry {
   const char*   str;
@@ -98,7 +100,7 @@ static const CommandEntry COMMAND_TABLE[] = {
 static const int COMMAND_TABLE_SIZE = sizeof(COMMAND_TABLE) / sizeof(COMMAND_TABLE[0]);
 
 // ======================================================================
-// FACE LOOKUP TABLE
+// FACE BITMAPS
 // ======================================================================
 
 // Track last state to only redraw face bitmap on a transition
@@ -151,6 +153,7 @@ void motionTask(void* param);
 void setServoAngle(uint8_t channel, int angle);
 bool pressingCheck(MovementState expectedState, int ms);
 bool parseMovementCommand(const char* str, MovementState& out);
+const char* stateName(MovementState state);
 void handleSubtrimCommand(const char* buf);
 void checkSerial();
 bool interruptibleDelay(int ms);
@@ -316,8 +319,13 @@ void motionTask(void* param) {
 
     // Face persists for static poses
     bool keepsFace = (running == STATE_DEAD || running == STATE_STAND || running == STATE_REST);
-    if (running != STATE_IDLE && currentCommand == STATE_IDLE && !keepsFace) {
-      drawFace(epd_bitmap_stand);
+    if (running != STATE_IDLE && currentCommand == STATE_IDLE) {
+      if (keepsFace) {
+        heldPose = running;   
+      } else {
+        heldPose = STATE_IDLE;
+        drawFace(epd_bitmap_stand);
+      }
     }
     
     vTaskDelay(pdMS_TO_TICKS(1));
@@ -359,7 +367,6 @@ void showFace(MovementState state) {
     }
   }
 
-  // If no bitmap is mapped for this state (or bitmap is null), do nothing
   if (bitmap == nullptr) return;
 
   drawFace(bitmap);
@@ -438,9 +445,14 @@ void handleMotor() {
 
 // GET /status — lightweight JSON for future scripting / Python use
 void handleStatus() {
+  MovementState state = currentCommand;
+  MovementState reported = (state == STATE_IDLE && heldPose != STATE_IDLE)
+                             ? (MovementState)heldPose : state;
   String json = "{\"state\":";
-  json += String((int)currentCommand);
-  json += ",\"frameDelay\":";
+  json += String((int)state);
+  json += ",\"name\":\"";
+  json += stateName(reported);
+  json += "\",\"frameDelay\":";
   json += String(frameDelay);
   json += "}";
   server.send(200, "application/json", json);
@@ -459,6 +471,14 @@ bool parseMovementCommand(const char* str, MovementState& out) {
     }
   }
   return false;
+}
+
+// Reverse lookup: state -> command string (STATE_IDLE -> "stop")
+const char* stateName(MovementState state) {
+  for (int i = 0; i < COMMAND_TABLE_SIZE; i++) {
+    if (COMMAND_TABLE[i].state == state) return COMMAND_TABLE[i].str;
+  }
+  return "unknown";
 }
 
 // Handles all "subtrim ..." variants
