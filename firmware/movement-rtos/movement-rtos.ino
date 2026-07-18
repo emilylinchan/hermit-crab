@@ -109,9 +109,8 @@ struct FaceEntry {
   const unsigned char* bitmap;
 };
 
-// nullptr = leave the current face on screen (no update)
 static const FaceEntry FACE_TABLE[] = {
-  { STATE_IDLE,     epd_bitmap_idle      },
+  { STATE_IDLE,     nullptr              }, // Leave the current face on screen (no update)
   { STATE_STAND,    epd_bitmap_stand     },
   { STATE_REST,     epd_bitmap_rest      },
   { STATE_FORWARD,  epd_bitmap_walk      },
@@ -164,6 +163,7 @@ void handleMotor();
 void handleStatus();
 
 void setupOLED();
+void drawFace(const unsigned char* bitmap);
 void showFace(MovementState state);
 
 // ======================================================================
@@ -186,6 +186,7 @@ void setup() {
   // Initialize I2C and OLED
   Wire.begin(I2C_SDA, I2C_SCL);
   setupOLED();
+  drawFace(epd_bitmap_idle);
 
   // Reserve all 4 LEDC hardware timers for stable PWM
   ESP32PWM::allocateTimer(0);
@@ -203,9 +204,6 @@ void setup() {
   // Initialize wifi access point
   setupWiFi();
   setupWebServer();
-
-  // Idle face on boot
-  showFace(STATE_IDLE);
 
   // Core 0 - I/0 tasks
   xTaskCreatePinnedToCore(webServerTask, "WebServer", 4096, NULL, 1, NULL, 0);
@@ -241,7 +239,7 @@ void setup() {
 // ======================================================================
 
 void loop() {
-  vTaskDelete(NULL); // no longer needed with FreeRTOS implementation
+  vTaskDelete(NULL); // No longer needed with FreeRTOS implementation
 }
 
 // ======================================================================
@@ -282,15 +280,18 @@ void motionTask(void* param) {
     switch (running) {
       case STATE_IDLE:                          break;
 
-      // Gaits: re-dispatched every loop while the state holds — no IDLE transition
+      // Gaits
       case STATE_FORWARD:  runWalkPose();       break;
       case STATE_BACKWARD: runWalkBackward();   break;
       case STATE_LEFT:     runTurnLeft();       break;
       case STATE_RIGHT:    runTurnRight();      break;
 
-      // One-shot poses
+      // Static poses
       case STATE_STAND:    runStandPose();      break;
       case STATE_REST:     runRestPose();       break;
+      case STATE_DEAD:     runDeadPose();       break;
+
+      // One-shot poses
       case STATE_WAVE:     runWavePose();       break;
       case STATE_DANCE:    runDancePose();      break;
       case STATE_SWIM:     runSwimPose();       break;
@@ -302,17 +303,21 @@ void motionTask(void* param) {
       case STATE_WORM:     runWormPose();       break;
       case STATE_SHAKE:    runShakePose();      break;
       case STATE_SHRUG:    runShrugPose();      break;
-      case STATE_DEAD:     runDeadPose();       break;
       case STATE_CRAB:     runCrabPose();       break;
       default:                                  break;
     }
 
-    bool isGait = (running == STATE_FORWARD || running == STATE_BACKWARD ||
-                  running == STATE_LEFT    || running == STATE_RIGHT);
-
     // Only one-shot poses return to idle, and only if nothing new arrived while they ran
+    bool isGait = (running == STATE_FORWARD || running == STATE_BACKWARD ||
+                   running == STATE_LEFT    || running == STATE_RIGHT);
     if (!isGait && running != STATE_IDLE && currentCommand == running) {
       currentCommand = STATE_IDLE;
+    }
+
+    // Face persists for static poses
+    bool keepsFace = (running == STATE_DEAD || running == STATE_STAND || running == STATE_REST);
+    if (running != STATE_IDLE && currentCommand == STATE_IDLE && !keepsFace) {
+      drawFace(epd_bitmap_stand);
     }
     
     vTaskDelay(pdMS_TO_TICKS(1));
@@ -327,12 +332,20 @@ void motionTask(void* param) {
 void setupOLED() {
   if (!display.begin(SSD1306_SWITCHCAPVCC, OLED_I2C_ADDR)) {
     Serial.println("SSD1306 not found — check wiring and I2C address");
-    // Robot continues to work without the display
     return;
   }
   display.clearDisplay();
   display.display();
   Serial.println("OLED initialized");
+}
+
+void drawFace(const unsigned char* bitmap) {
+  // Thread-safe writing to OLED
+  xSemaphoreTake(displayMutex, portMAX_DELAY);
+  display.clearDisplay();
+  display.drawBitmap(0, 0, bitmap, OLED_WIDTH, OLED_HEIGHT, SSD1306_WHITE);
+  display.display();
+  xSemaphoreGive(displayMutex);
 }
 
 void showFace(MovementState state) {
@@ -349,12 +362,7 @@ void showFace(MovementState state) {
   // If no bitmap is mapped for this state (or bitmap is null), do nothing
   if (bitmap == nullptr) return;
 
-  // Thread-safe writing to OLED
-  xSemaphoreTake(displayMutex, portMAX_DELAY);
-  display.clearDisplay();
-  display.drawBitmap(0, 0, bitmap, OLED_WIDTH, OLED_HEIGHT, SSD1306_WHITE);
-  display.display();
-  xSemaphoreGive(displayMutex);
+  drawFace(bitmap);
 }
 
 // ======================================================================
