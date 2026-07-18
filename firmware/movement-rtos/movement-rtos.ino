@@ -572,7 +572,7 @@ bool pressingCheck(MovementState expectedState, int ms) {
       currentCommand = incoming;
     }
     if (currentCommand != expectedState) {
-      runStandPose();
+      applyStandPose(); // Explicit reset to neutral before the next state takes over
       return false;
     }
     vTaskDelay(pdMS_TO_TICKS(1)); // Yield to the scheduler instead of burning CPU

@@ -60,6 +60,7 @@ extern bool interruptibleDelay(int ms);
 // ======================================================================
 
 void runRestPose();
+void applyStandPose(); // Silent stand — servo writes only, no serial print
 void runStandPose();
 void runWavePose();
 void runDancePose();

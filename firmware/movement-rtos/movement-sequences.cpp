@@ -10,8 +10,8 @@ void runRestPose() {
   for (int i = 0; i < 8; i++) setServoAngle(i, 90);
 }
 
-void runStandPose() {
-  Serial.println("STAND");
+// Silent servo writes only — used as a setup/reset step inside other poses
+void applyStandPose() {
   setServoAngle(R1, 135);
   setServoAngle(R2, 45);
   setServoAngle(L1, 45);
@@ -22,10 +22,15 @@ void runStandPose() {
   setServoAngle(L4, 180);
 }
 
+void runStandPose() {
+  Serial.println("STAND");
+  applyStandPose();
+}
+
 // ---------- ANIMATED POSES ----------
 void runWavePose() {
   Serial.println("WAVE");
-  runStandPose();
+  applyStandPose();
   if (!interruptibleDelay(200)) return;
   setServoAngle(R4, 80);
   setServoAngle(L3, 180);
@@ -40,7 +45,7 @@ void runWavePose() {
     setServoAngle(L3, 100);
     if (!interruptibleDelay(300)) return;
   }
-  runStandPose();
+  applyStandPose();
 }
 
 void runDancePose() {
@@ -66,7 +71,7 @@ void runDancePose() {
     setServoAngle(L4, 65);
     if (!interruptibleDelay(300)) return;
   }
-  runStandPose();
+  applyStandPose();
 }
 
 void runSwimPose() {
@@ -84,7 +89,7 @@ void runSwimPose() {
     setServoAngle(L2, 90);
     if (!interruptibleDelay(400)) return;
   }
-  runStandPose();
+  applyStandPose();
 }
 
 void runPointPose() {
@@ -98,12 +103,12 @@ void runPointPose() {
   setServoAngle(R4, 80);
   setServoAngle(R3, 170);
   if (!interruptibleDelay(2000)) return;
-  runStandPose();
+  applyStandPose();
 }
 
 void runPushupPose() {
   Serial.println("PUSHUP");
-  runStandPose();
+  applyStandPose();
   if (!interruptibleDelay(200)) return;
   setServoAngle(L1, 0);
   setServoAngle(R1, 180);
@@ -118,12 +123,12 @@ void runPushupPose() {
     setServoAngle(R3, 90);
     if (!interruptibleDelay(500)) return;
   }
-  runStandPose();
+  applyStandPose();
 }
 
 void runBowPose() {
   Serial.println("BOW");
-  runStandPose();
+  applyStandPose();
   if (!interruptibleDelay(200)) return;
   setServoAngle(L1, 0);
   setServoAngle(R1, 180);
@@ -137,12 +142,12 @@ void runBowPose() {
   setServoAngle(L3, 90);
   setServoAngle(R3, 90);
   if (!interruptibleDelay(3000)) return;
-  runStandPose();
+  applyStandPose();
 }
 
 void runCutePose() {
   Serial.println("CUTE");
-  runStandPose();
+  applyStandPose();
   if (!interruptibleDelay(200)) return;
   setServoAngle(L2, 160);
   setServoAngle(R2, 20);
@@ -161,12 +166,12 @@ void runCutePose() {
     setServoAngle(L4, 0);
     if (!interruptibleDelay(300)) return;
   }
-  runStandPose();
+  applyStandPose();
 }
 
 void runFreakyPose() {
   Serial.println("FREAKY");
-  runStandPose();
+  applyStandPose();
   if (!interruptibleDelay(200)) return;
   setServoAngle(L1, 0);
   setServoAngle(R1, 180);
@@ -181,12 +186,12 @@ void runFreakyPose() {
     setServoAngle(R3, 0);
     if (!interruptibleDelay(400)) return;
   }
-  runStandPose();
+  applyStandPose();
 }
 
 void runWormPose() {
   Serial.println("WORM");
-  runStandPose();
+  applyStandPose();
   if (!interruptibleDelay(200)) return;
   setServoAngle(R1, 180);
   setServoAngle(R2, 0);
@@ -209,12 +214,12 @@ void runWormPose() {
     setServoAngle(L4, 45);
     if (!interruptibleDelay(300)) return;
   }
-  runStandPose();
+  applyStandPose();
 }
 
 void runShakePose() {
   Serial.println("SHAKE");
-  runStandPose();
+  applyStandPose();
   if (!interruptibleDelay(200)) return;
   setServoAngle(R1, 135);
   setServoAngle(L1, 45);
@@ -231,12 +236,12 @@ void runShakePose() {
     setServoAngle(L4, 180);
     if (!interruptibleDelay(300)) return;
   }
-  runStandPose();
+  applyStandPose();
 }
 
 void runShrugPose() {
   Serial.println("SHRUG");
-  runStandPose();
+  applyStandPose();
   if (!interruptibleDelay(200)) return;
   setServoAngle(R3, 90);
   setServoAngle(R4, 90);
@@ -248,12 +253,12 @@ void runShrugPose() {
   setServoAngle(L3, 180);
   setServoAngle(L4, 0);
   if (!interruptibleDelay(1500)) return;
-  runStandPose();
+  applyStandPose();
 }
 
 void runDeadPose() {
   Serial.println("DEAD");
-  runStandPose();
+  applyStandPose();
   if (!interruptibleDelay(200)) return;
   setServoAngle(R3, 90);
   setServoAngle(R4, 90);
@@ -263,7 +268,7 @@ void runDeadPose() {
 
 void runCrabPose() {
   Serial.println("CRAB");
-  runStandPose();
+  applyStandPose();
   if (!interruptibleDelay(200)) return;
   setServoAngle(R1, 90);
   setServoAngle(R2, 90);
@@ -285,7 +290,7 @@ void runCrabPose() {
     setServoAngle(L4, 135);
     if (!interruptibleDelay(300)) return;
   }
-  runStandPose();
+  applyStandPose();
 }
 
 // ---------- MOVEMENT ANIMATIONS ----------
