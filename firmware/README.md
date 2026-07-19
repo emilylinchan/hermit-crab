@@ -111,16 +111,17 @@ Mechanical assembly never puts every leg segment at a perfect neutral, so each s
 ## Directory Layout
 
 ```
-main/
-├── main.ino                    Tasks, state machine, interpolator, web/serial handlers
-├── movement-sequences.h        Servo layout, state enum, Keyframe/Sequence model
-├── movement-sequences.cpp      All pose & gait data tables + the playback engines
-├── web.h                       The web UI (single self-contained HTML page in PROGMEM)
-└── face-bitmaps.h / .cpp       OLED face bitmaps (X-macro list, image2cpp output)
-
-tests/
-├── servo/mg90d-servo-test.ino  Standalone sketch for bring-up/calibration of servos
-└── wifi/wifi-test.ino          Standalone sketch to verify the ESP32 WiFi AP in isolation
+firmware/
+├── main/
+|    ├── main.ino                    # Tasks, state machine, interpolator, web/serial handlers
+|    ├── movement-sequences.h        # Servo layout, state enum, Keyframe/Sequence model
+|    ├── movement-sequences.cpp      # All pose & gait data tables + the playback engines
+|    ├── web.h                       # The web UI (single self-contained HTML page in PROGMEM)
+|    └── face-bitmaps.h / .cpp       # OLED face bitmaps (X-macro list, image2cpp output)
+|
+└── tests/
+     ├── servo/mg90d-servo-test.ino  # Standalone sketch for bring-up/calibration of servos
+     └── wifi/wifi-test.ino          # Standalone sketch to verify the ESP32 WiFi AP in isolation
 ```
 
 ## Hardware Status

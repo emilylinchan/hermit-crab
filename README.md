@@ -16,16 +16,17 @@ Inspired by [dorianborian/sesame-robot](https://github.com/dorianborian/sesame-r
 ## Project Structure
 
 ```
-firmware/                       
-├── main/        Main ESP32 firmware project
-└── tests/       Standalone bring-up sketches (servo calibration, WiFi AP)
-
-hardware/
-├── cad/         Chassis and leg CAD models
-└── pcb/
-    ├── drc/     Design Rule Check for JLC PCB manufacturer
-    ├── v1/      Version 1 board files
-    └── v2/      Version 2 board files
+hermit-crab/
+├── firmware/                       
+|    ├── main/      # Main ESP32 firmware project
+|    └── tests/     # Standalone bring-up sketches (servo calibration, WiFi AP)
+|
+└── hardware/
+    ├── cad/        # Chassis and leg CAD models
+    └── pcb/
+        ├── drc/    # Design Rule Check for JLC PCB manufacturer
+        ├── v1/     # Version 1 board files
+        └── v2/     # Version 2 board files
 ```
 
 - **Firmware** — architecture, controls, and calibration are documented in [`firmware/README.md`](firmware/README.md)
