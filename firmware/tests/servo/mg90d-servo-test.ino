@@ -2,27 +2,21 @@
 #include <ESP32Servo.h>
 
 // ======================================================================
-// --- CONFIGURATION ---
+// CONFIGURATION
 // ======================================================================
 
 Servo servos[8];
 
-// Motor Pin Mapping
 // Index:                 0   1   2   3   4    5   6   7
 // Label:                 R1  R2  L1  L2  R4  R3  L3  L4
-const int servoPins[8] = {13, 14, 15, 16, 17, 18, 19, 21};
+const int servoPins[8] = {13, 14, 23, 16, 17, 18, 19, 33};
 
-// ---- MG90D 270° SERVO CALIBRATION ----
-// Full travel: 500–2500 µs  → 2000 µs span for 270°
-// Using only the center 180° → trim 45° from each end
-// Trim per side: (45° / 270°) * 2000 µs ≈ 333 µs
-// Final usable pulse range: 833–2167 µs
-
+// MG90D 270deg servo calibration
 const int MIN_PULSE = 833;   // 500  + 333
 const int MAX_PULSE = 2167;  // 2500 - 333
 
 // ======================================================================
-// --- SETUP ---
+//  SETUP 
 // ======================================================================
 
 void setup() {
@@ -44,7 +38,7 @@ void setup() {
   Serial.println(" µs");
   Serial.println("Status: Motors are currently OFF (Limp).");
 
-  // Reserve all 4 LEDC hardware timers so that the Servo library can guarantee stable microsecond pulses for PWM
+  // Reserve all 4 LEDC hardware timers for stable PWM
   ESP32PWM::allocateTimer(0);
   ESP32PWM::allocateTimer(1);
   ESP32PWM::allocateTimer(2);
@@ -52,7 +46,7 @@ void setup() {
 }
 
 // ======================================================================
-// --- MAIN LOOP ---
+// MAIN LOOP
 // ======================================================================
 
 void loop() {
@@ -74,7 +68,7 @@ void loop() {
       String valStr = input.substring(commaIndex + 1);
       int angle     = valStr.toInt();
 
-      // Limit servo angle range to just 0-180°
+      // Limit servo angle range to just 0-180deg
       if (angle < 0)   angle = 0;
       if (angle > 180) angle = 180;
 
@@ -102,16 +96,15 @@ void loop() {
 }
 
 // ======================================================================
-// --- HELPER FUNCTIONS ---
+// HELPER FUNCTIONS
 // ======================================================================
 
+// Map a 0-180deg angle to the correct pulse width for the 270deg servo
 int angleToPulse(int angle) {
-  // Map a 0-180° angle to the correct pulse width for the 270° servo
   return map(angle, 0, 180, MIN_PULSE, MAX_PULSE);
 }
 
 void moveMotor(int id, int angle) {
-  // Validate ID
   if (id < 0 || id > 7) {
     Serial.println("Error: Motor ID must be 0-7");
     return;
@@ -122,9 +115,6 @@ void moveMotor(int id, int angle) {
     servos[id].attach(servoPins[id], MIN_PULSE, MAX_PULSE);
   }
 
-  // writeMicroseconds() is used instead of write() for precise pulse control.
-  // ***NOTE*** write() relies on the library's internal angle-to-pulse mapping which
-  //            is calibrated for 180° servos — bypassing it avoids any drift at the endpoints.
   servos[id].writeMicroseconds(angleToPulse(angle));
   
   Serial.print("OK: Motor ");
