@@ -28,7 +28,10 @@ const Sequence SEQ_DEAD = { DEAD_FRAMES, FRAME_COUNT(DEAD_FRAMES), 0, 1, false, 
 // ======================================================================
 
 static const Keyframe WAVE_FRAMES[] = {
+  //  R1   R2   L1   L2   R4   R3   L3   L4    ms
   { {135,  45,  45, 135,   0, 180,   0, 180}, 200 },  // stand
+  { {170,  NC,  NC, 165,  NC,  NC,  NC,  NC}, 250 },  // shift weight back-right (feet stay planted)
+  { { NC,  NC,  NC,  NC,  NC,  NC, 180,  NC}, 200 },  // raise arm
   { { NC,  NC,  NC,  NC,  NC,  NC, 180,  NC}, 300 },  // -- loop: arm up
   { { NC,  NC,  NC,  NC,  NC,  NC, 100,  NC}, 300 },  // -- loop: arm down
 };
