@@ -9,92 +9,66 @@
 #include "web.h"
 
 // ======================================================================
-// CONFIGURATION
+// TYPES
 // ======================================================================
 
-// ---- WiFi Access Point ----
-const char* AP_SSID       = "HermitCrab";
-const char* AP_PASS       = "12345678";   // NULL for open network
-const bool  AP_HIDDEN     = false;
-const uint8_t AP_MAX_CONN = 2;
-IPAddress AP_IP(192, 168, 0, 1);
-IPAddress AP_GATEWAY(192, 168, 0, 1);
-IPAddress AP_SUBNET(255, 255, 255, 0);
-WebServer server(80); // Default newtork port for regular, unencrypted HTTP web traffic
-
-// ---- Hardware ----
-const uint8_t OPERATING_FREQ = 50;
-
-const uint16_t OLED_WIDTH   = 128;
-const uint16_t OLED_HEIGHT  = 64;
-const uint8_t OLED_I2C_ADDR = 0x3C;
-const int8_t OLED_RESET     = -1;  // -1 = share Arduino reset pin
-
-const uint8_t I2C_SDA = 21;
-const uint8_t I2C_SCL = 22;
-
-// Index:                     0   1   2   3   4   5   6   7
-// Label:                     R1  R2  L1  L2  R4  R3  L3  L4
-const uint8_t servoPins[8] = {13, 14, 23, 16, 17, 18, 19, 33};
-
-// ---- MG90D Pulse Calibration ----
-// Full travel: 500–2500 µs → 2000 µs span for 270°
-// Trimming to center 180°: (45° / 270°) * 2000 µs ≈ 333 µs per side
-const uint16_t MIN_PULSE = 833;   
-const uint16_t MAX_PULSE = 2167;  
-
-// ---- Hold Watchdog ----
-// Web D-pad re-sends its gait every 200ms while held; if refreshes stop
-// (browser closed, button released, WiFi dropped), auto-stop the robot.
-const uint32_t HOLD_TIMEOUT_MS = 600;  // ms without refresh before auto-stop (3 missed refreshes)
-
-// ---- Motion Interpolation ----
-const int INTERP_TICK_MS = 20;   // ms per interpolator tick (50 Hz)
-int MAX_SPEED            = 600;  // deg/s max angular velocity (lower = smoother, higher = snappier)
-
-// ---- Subtrim ----
-int8_t servoSubtrim[8] = {0, 0, 0, 0, 0, 0, 0, 0};
-
-// ======================================================================
-// HARDWARE
-// ======================================================================
-
-Servo servos[8];
-Adafruit_SSD1306 display(OLED_WIDTH, OLED_HEIGHT, &Wire, OLED_RESET);
-
-SemaphoreHandle_t displayMutex;
-
-// ======================================================================
-// SERVO INTERPOLATION STATE
-// ======================================================================
-
-float          servoPos[8];     // Where each servo is now (deg)
-volatile float servoTarget[8];  // Where each servo is headed (deg)
-
-// ======================================================================
-// STATE MACHINE
-// ======================================================================
-
-volatile MovementState currentCommand = STATE_IDLE;
-QueueHandle_t commandQueue;
-
-// held=true means the sender will keep re-sending (web D-pad); watchdog
-// stops the robot if refreshes lapse. Serial commands/poses send false.
+// A command in flight through the queue: the requested state plus whether
+// the caller intends to hold it (gaits re-send; the watchdog watches these).
 struct Command {
   MovementState state;
   bool          held;
 };
 
-// Watchdog bookkeeping. Written ONLY from motionTask context (via
-// pollCommandQueue — the single point where commands leave the queue)
-volatile bool          holdWatchdog      = false;  // armed by a held command
-volatile unsigned long lastHoldRefreshMs = 0;      // millis() of last held refresh
-
+// One row of the string -> state lookup used by the serial CLI and web /cmd.
 struct CommandEntry {
   const char*   str;
   MovementState state;
 };
 
+// One row of the state -> face bitmap lookup used on state transitions.
+struct FaceEntry {
+  MovementState        state;
+  const unsigned char* bitmap;
+};
+
+// ======================================================================
+// CONFIGURATION
+// ======================================================================
+// Compile-time constants only. Anything mutated at runtime lives in STATE.
+
+// ---- WiFi Access Point ----
+const char*    AP_SSID         = "HermitCrab";
+const char*    AP_PASS         = "12345678";
+const bool     AP_HIDDEN       = false;
+const uint8_t  AP_MAX_CONN     = 2;
+const uint32_t HOLD_TIMEOUT_MS = 600;  // Held-gait watchdog window (ms)
+
+// ---- Servos ----
+const uint8_t  OPERATING_FREQ = 50;    // Servo PWM frequency (Hz)
+const uint16_t MIN_PULSE      = 833;   // 0deg   pulse width (us) - trimmed from 500
+const uint16_t MAX_PULSE      = 2167;  // 180deg pulse width (us) - trimmed from 2500
+
+const int INTERP_TICK_MS = 20;         // 50 Hz interpolator tick (1000/OPERATING_FREQ)
+const int MAX_SPEED      = 600;        // Max angular velocity (deg/s)
+                                       // (lower = smoother, higher = snappier)
+
+// Label:                     R1  R2  L1  L2  R4  R3  L3  L4
+const uint8_t servoPins[8] = {13, 14, 23, 16, 17, 18, 19, 33};
+
+// ---- OLED Face Display ----
+const uint16_t OLED_WIDTH    = 128;
+const uint16_t OLED_HEIGHT   = 64;
+const uint8_t  OLED_I2C_ADDR = 0x3C;
+const int8_t   OLED_RESET    = -1;
+
+const uint8_t I2C_SDA = 21;
+const uint8_t I2C_SCL = 22;
+
+// ======================================================================
+// LOOKUP TABLES
+// ======================================================================
+
+// String -> state. Drives both the serial CLI and the web /cmd endpoint.
 static const CommandEntry COMMAND_TABLE[] = {
   { "stop",   STATE_IDLE     },
   { "rest",   STATE_REST     },
@@ -119,45 +93,62 @@ static const CommandEntry COMMAND_TABLE[] = {
 };
 static const int COMMAND_TABLE_SIZE = sizeof(COMMAND_TABLE) / sizeof(COMMAND_TABLE[0]);
 
-// ======================================================================
-// FACE LOOKUP TABLE
-// ======================================================================
-
-volatile MovementState lastDisplayedState = STATE_IDLE;
-
-struct FaceEntry {
-  MovementState state;
-  const unsigned char* bitmap;
-};
-
+// State -> face bitmap. nullptr entries draw no face (e.g. IDLE).
 static const FaceEntry FACE_TABLE[] = {
-  { STATE_IDLE,     nullptr              },
-  { STATE_STAND,    epd_bitmap_stand     },
-  { STATE_REST,     epd_bitmap_rest      },
-  { STATE_FORWARD,  epd_bitmap_walk      },
-  { STATE_BACKWARD, epd_bitmap_walk      },
-  { STATE_LEFT,     epd_bitmap_walk      },
-  { STATE_RIGHT,    epd_bitmap_walk      },
-  { STATE_WAVE,     epd_bitmap_wave      },
-  { STATE_DANCE,    epd_bitmap_dance     },
-  { STATE_SWIM,     epd_bitmap_swim      },
-  { STATE_POINT,    epd_bitmap_point     },
-  { STATE_PUSHUP,   epd_bitmap_pushup    },
-  { STATE_BOW,      epd_bitmap_bow       },
-  { STATE_CUTE,     epd_bitmap_cute      },
-  { STATE_FREAKY,   epd_bitmap_freaky    },
-  { STATE_WORM,     epd_bitmap_worm      },
-  { STATE_SHAKE,    epd_bitmap_shake     },
-  { STATE_SHRUG,    epd_bitmap_shrug     },
-  { STATE_DEAD,     epd_bitmap_dead      },
-  { STATE_CRAB,     epd_bitmap_crab      },
+  { STATE_IDLE,     nullptr           },
+  { STATE_STAND,    epd_bitmap_stand  },
+  { STATE_REST,     epd_bitmap_rest   },
+  { STATE_FORWARD,  epd_bitmap_walk   },
+  { STATE_BACKWARD, epd_bitmap_walk   },
+  { STATE_LEFT,     epd_bitmap_walk   },
+  { STATE_RIGHT,    epd_bitmap_walk   },
+  { STATE_WAVE,     epd_bitmap_wave   },
+  { STATE_DANCE,    epd_bitmap_dance  },
+  { STATE_SWIM,     epd_bitmap_swim   },
+  { STATE_POINT,    epd_bitmap_point  },
+  { STATE_PUSHUP,   epd_bitmap_pushup },
+  { STATE_BOW,      epd_bitmap_bow    },
+  { STATE_CUTE,     epd_bitmap_cute   },
+  { STATE_FREAKY,   epd_bitmap_freaky },
+  { STATE_WORM,     epd_bitmap_worm   },
+  { STATE_SHAKE,    epd_bitmap_shake  },
+  { STATE_SHRUG,    epd_bitmap_shrug  },
+  { STATE_DEAD,     epd_bitmap_dead   },
+  { STATE_CRAB,     epd_bitmap_crab   },
 };
 static const int FACE_TABLE_SIZE = sizeof(FACE_TABLE) / sizeof(FACE_TABLE[0]);
 
 // ======================================================================
-// SERIAL CLI STATE
+// STATE
 // ======================================================================
 
+// ---- WiFi ----
+IPAddress AP_IP(192, 168, 0, 1);
+IPAddress AP_GATEWAY(192, 168, 0, 1);
+IPAddress AP_SUBNET(255, 255, 255, 0);
+WebServer server(80);
+
+// ---- Servos ----
+Servo          servos[8];
+float          servoPos[8];              // Where each servo is now (deg)
+volatile float servoTarget[8];           // Where each servo is headed (deg)
+int8_t         servoSubtrim[8] = {0};    // Per-servo trim (deg), runtime-tunable
+                                         // via the "subtrim" serial command
+
+// ---- Movement ----
+volatile MovementState currentCommand = STATE_IDLE;
+QueueHandle_t          commandQueue;
+
+volatile bool          holdWatchdog      = false;  // Armed by a held command
+volatile unsigned long lastHoldRefreshMs = 0;
+
+// ---- OLED Face Display ----
+Adafruit_SSD1306  display(OLED_WIDTH, OLED_HEIGHT, &Wire, OLED_RESET);
+SemaphoreHandle_t displayMutex;
+
+volatile MovementState lastDisplayedState = STATE_IDLE;
+
+// ---- Serial CLI ----
 char commandBuffer[64];
 byte bufferPos = 0;
 
@@ -165,23 +156,28 @@ byte bufferPos = 0;
 // PROTOTYPES
 // ======================================================================
 
+// ---- Tasks ----
 void webServerTask(void* param);
 void serialTask(void* param);
 void motionTask(void* param);
 void interpolatorTask(void* param);
 
+// ---- Servo Write Path ----
 void setServoTarget(uint8_t channel, int angle);
 void setServoImmediate(uint8_t channel, int angle);
 void writeServoHardware(uint8_t channel, float pos);
-void submitCommand(MovementState state, bool held);
-bool pollCommandQueue();
-bool pressingCheck(MovementState expectedState, int ms);
-bool parseMovementCommand(const char* str, MovementState& out);
-const char* commandName(MovementState state);
-void handleSubtrimCommand(const char* buf);
-void checkSerial();
-bool interruptibleDelay(int ms);
 
+// ---- Command Queue + Input ----
+void        submitCommand(MovementState state, bool held);
+bool        pollCommandQueue();
+bool        pressingCheck(MovementState expectedState, int ms);
+bool        interruptibleDelay(int ms);
+bool        parseMovementCommand(const char* str, MovementState& out);
+const char* commandName(MovementState state);
+void        handleSubtrimCommand(const char* buf);
+void        checkSerial();
+
+// ---- Network + Web ----
 void setupWiFi();
 void setupWebServer();
 void handleRoot();
@@ -189,6 +185,7 @@ void handleCmd();
 void handleMotor();
 void handleStatus();
 
+// ---- OLED ----
 void setupOLED();
 void drawFace(const unsigned char* bitmap);
 void showFace(MovementState state);
@@ -199,17 +196,17 @@ void showFace(MovementState state);
 
 void setup() {
 
-  // FreeRTOS setup
+  // FreeRTOS primitives
   displayMutex = xSemaphoreCreateMutex();
   commandQueue = xQueueCreate(1, sizeof(Command));
 
-  // Initialize serial communication
+  // Serial communication
   Serial.begin(115200);
   delay(100);
 
   Serial.println("Hermit Crab booting up...");
 
-  // Initialize I2C and OLED
+  // I2C + OLED
   Wire.begin(I2C_SDA, I2C_SCL);
   setupOLED();
   drawFace(epd_bitmap_idle);
@@ -220,7 +217,7 @@ void setup() {
   ESP32PWM::allocateTimer(2);
   ESP32PWM::allocateTimer(3);
 
-  // Servo init with 180° window inside 270° servo pulse range
+  // Servo init with the 180deg window inside the 270deg servo pulse range
   for (int i = 0; i < 8; i++) {
     servos[i].setPeriodHertz(OPERATING_FREQ);
     servos[i].attach(servoPins[i], MIN_PULSE, MAX_PULSE);
@@ -233,7 +230,7 @@ void setup() {
     delay(5);
   }
 
-  // Initialize wifi access point
+  // WiFi access point + HTTP server
   setupWiFi();
   setupWebServer();
 
@@ -276,13 +273,14 @@ void setup() {
 // ======================================================================
 
 void loop() {
-  vTaskDelete(NULL); // Arduino loop not needed with FreeRTOS implementation
+  vTaskDelete(NULL); // Arduino loop unused; all work runs in FreeRTOS tasks
 }
 
 // ======================================================================
 // TASKS
 // ======================================================================
 
+// Core 0: services the web server client poll loop.
 void webServerTask(void* param) {
   for (;;) {
     server.handleClient();
@@ -290,6 +288,7 @@ void webServerTask(void* param) {
   }
 }
 
+// Core 0: drains the serial CLI.
 void serialTask(void* param) {
   for (;;) {
     checkSerial();
@@ -297,33 +296,36 @@ void serialTask(void* param) {
   }
 }
 
+// Core 1: ramps every servo toward its target at MAX_SPEED deg/s instead of
+// snapping — the only task allowed to write servo hardware
 void interpolatorTask(void* param) {
   for (;;) {
-    float maxStep = (float)MAX_SPEED * INTERP_TICK_MS / 1000.0f; // Degrees
+    float maxStep = (float)MAX_SPEED * INTERP_TICK_MS / 1000.0f;  // Max degrees movable per tick
 
+    // Advance all 8 servos towards target
     for (int i = 0; i < 8; i++) {
       float target = servoTarget[i];
       float diff   = target - servoPos[i];
-
       if (diff != 0.0f) {
         if      (diff >  maxStep) servoPos[i] += maxStep;
         else if (diff < -maxStep) servoPos[i] -= maxStep;
-        else                      servoPos[i]  = target;  // arrived
+        else                      servoPos[i]  = target;  // Arrived
         writeServoHardware(i, servoPos[i]);
       }
-      // No write when already at target — servo holds position on its own
     }
 
     vTaskDelay(pdMS_TO_TICKS(INTERP_TICK_MS));
   }
 }
 
+// Core 1: the movement brain. Pulls commands off the queue, drives the face,
+// and dispatches the current state to its pose/gait sequence.
 void motionTask(void* param) {
   for (;;) {
     
     pollCommandQueue();
 
-    // On state transition: update face + announce
+    // On state transition: update face + announce over serial
     if (currentCommand != lastDisplayedState) {
       showFace(currentCommand);
       Serial.print("State: ");
@@ -335,9 +337,7 @@ void motionTask(void* param) {
     const Sequence* seq = lookupSequence(currentCommand);
     if (seq != nullptr) {
       if (seq->isGait) {
-        // One gait cycle; replays if still held. Abort-to-idle recovers to
-        // stand posture, so match the face (abort into another command is
-        // already handled by the transition block above).
+        // Abort-to-idle from gait recovers to stand posture
         if (!playGaitCycle(*seq, currentCommand) && currentCommand == STATE_IDLE) {
           drawFace(epd_bitmap_stand);
         }
@@ -350,7 +350,6 @@ void motionTask(void* param) {
         else {
           // Self-transition to IDLE only on full completion
           currentCommand = STATE_IDLE;
-          // Pose glided back to stand (standAtEnd) — match the face
           if (seq->standAtEnd) drawFace(epd_bitmap_stand);
         }
       }
@@ -360,7 +359,6 @@ void motionTask(void* param) {
   }
 }
 
-
 // ======================================================================
 // OLED FACE DISPLAY
 // ======================================================================
@@ -368,17 +366,16 @@ void motionTask(void* param) {
 void setupOLED() {
   if (!display.begin(SSD1306_SWITCHCAPVCC, OLED_I2C_ADDR)) {
     Serial.println("SSD1306 not found — check wiring and I2C address");
-    // Robot continues to work without the display
-    return;
+    return; // Robot still runs without the display
   }
   display.clearDisplay();
   display.display();
   Serial.println("OLED initialized");
 }
 
+// Looks up the face for a state and draws it. No-op if the state has no face.
 void showFace(MovementState state) {
   const unsigned char* bitmap = nullptr;
-  // Match face bitmap to movement state
   for (int i = 0; i < FACE_TABLE_SIZE; i++) {
     if (FACE_TABLE[i].state == state) {
       bitmap = FACE_TABLE[i].bitmap;
@@ -389,6 +386,7 @@ void showFace(MovementState state) {
   drawFace(bitmap);
 }
 
+// Display a face bitmap (mutex-guarded).
 void drawFace(const unsigned char* bitmap) {
   xSemaphoreTake(displayMutex, portMAX_DELAY);
   display.clearDisplay();
@@ -430,8 +428,8 @@ void handleRoot() {
   server.send_P(200, "text/html", INDEX_HTML);
 }
 
-// GET /cmd?c=<command> — accepts any COMMAND_TABLE string. Movement states
-// are held (caller re-sends); poses run once and self-transition to STATE_IDLE.
+// GET /cmd?c=<command> — accepts any COMMAND_TABLE string. Gaits are marked
+// held (caller re-sends); poses run once and self-transition to STATE_IDLE.
 void handleCmd() {
   if (!server.hasArg("c")) {
     server.send(400, "text/plain", "missing arg");
@@ -449,7 +447,7 @@ void handleCmd() {
   }
 }
 
-// GET /motor?i=<0-7>&a=<0-180>
+// GET /motor?i=<0-7>&a=<0-180> — direct single-servo control.
 void handleMotor() {
   if (!server.hasArg("i") || !server.hasArg("a")) {
     server.send(400, "text/plain", "missing args");
@@ -466,7 +464,8 @@ void handleMotor() {
   server.send(200, "text/plain", "ok");
 }
 
-// GET /status — lightweight JSON for future scripting / Python use
+// GET /status — lightweight JSON snapshot (state + live servo positions).
+// Intended as a hook for future Python scripting.
 void handleStatus() {
   MovementState state = currentCommand;
   String json = "{\"state\":";
@@ -486,7 +485,7 @@ void handleStatus() {
 // HELPER FUNCTIONS
 // ======================================================================
 
-// Walks the lookup table and maps an input string to a MovementState
+// String -> state via COMMAND_TABLE. Returns false on no match.
 bool parseMovementCommand(const char* str, MovementState& out) {
   for (int i = 0; i < COMMAND_TABLE_SIZE; i++) {
     if (strcmp(str, COMMAND_TABLE[i].str) == 0) {
@@ -497,7 +496,7 @@ bool parseMovementCommand(const char* str, MovementState& out) {
   return false;
 }
 
-// Reverse lookup: state → command string, for transition announcements
+// Reverse lookup: state → command string, for transition announcements.
 const char* commandName(MovementState state) {
   for (int i = 0; i < COMMAND_TABLE_SIZE; i++) {
     if (COMMAND_TABLE[i].state == state) return COMMAND_TABLE[i].str;
@@ -505,7 +504,7 @@ const char* commandName(MovementState state) {
   return "?";
 }
 
-// Handles all "subtrim ..." command variants
+// Handles all "subtrim ..." command variants: save / reset / set / show.
 void handleSubtrimCommand(const char* buf) {
   if (strcmp(buf, "subtrim save") == 0) {
     Serial.println("Copy this into the code:");
@@ -552,11 +551,13 @@ void handleSubtrimCommand(const char* buf) {
 // writeServoHardware(): applies subtrim at write time so trim changes take
 // effect immediately without disturbing targets.
 
+// Sets where a servo should head (interpolator does the move). Safe from any task.
 void setServoTarget(uint8_t channel, int angle) {
   if (channel >= 8) return;
   servoTarget[channel] = (float)constrain(angle, 0, 180);
 }
 
+// Boot-only snap that bypasses interpolation. Not safe once tasks are running.
 void setServoImmediate(uint8_t channel, int angle) {
   if (channel >= 8) return;
   float a = (float)constrain(angle, 0, 180);
@@ -565,18 +566,19 @@ void setServoImmediate(uint8_t channel, int angle) {
   writeServoHardware(channel, a);
 }
 
+// Maps angle + subtrim to a pulse and drives the servo.
 void writeServoHardware(uint8_t channel, float pos) {
   int adjusted = constrain((int)(pos + 0.5f) + servoSubtrim[channel], 0, 180);
   int pulseUs  = map(adjusted, 0, 180, MIN_PULSE, MAX_PULSE);
   servos[channel].writeMicroseconds(pulseUs);
 }
 
-// Reads and processes any pending serial bytes mid-animation
+// Reads and processes any pending serial bytes mid-animation.
 void checkSerial() {
   while (Serial.available()) {
     char c = Serial.read();
 
-    // Check for termination character
+    // Terminator: parse the accumulated line
     if (c == '\n' || c == '\r') {
       if (bufferPos > 0) {
         commandBuffer[bufferPos] = '\0';
@@ -615,24 +617,22 @@ void checkSerial() {
         }
       }
     } 
-    // Fill buffer if space remains
+    // Otherwise accumulate, if buffer space remains
     else if (bufferPos < sizeof(commandBuffer) - 1) {
       commandBuffer[bufferPos++] = c;
     }
   }
 }
 
-// ---- Command queue helpers ----
-// submitCommand(): commands enter here, safe from any task.
-// pollCommandQueue(): commands leave here, called only from motionTask context
-// (loop, interruptibleDelay, pressingCheck) — the single writer of currentCommand
-// and the watchdog state, so no locks needed.
-
+// Enqueues a command (overwrite: the newest command always wins). 
+// Safe to call from any task.
 void submitCommand(MovementState state, bool held) {
   Command cmd = { state, held };
   xQueueOverwrite(commandQueue, &cmd);
 }
 
+// Dequeues one command if present, updating currentCommand + watchdog state.
+// Returns true if a command was consumed. Call only from motionTask context.
 bool pollCommandQueue() {
   Command incoming;
   if (xQueueReceive(commandQueue, &incoming, 0) != pdTRUE) return false;
@@ -642,20 +642,22 @@ bool pollCommandQueue() {
   return true;
 }
 
-// Used in animated poses (wave, dance, etc.)
+// Interruptible sleep for animated poses (wave, dance, etc.). Returns true if
+// the full duration elapsed, false if currentCommand changed (poll to abort).
 bool interruptibleDelay(int ms) {
   MovementState stateAtStart = currentCommand;
   unsigned long start = millis();
   while (millis() - start < ms) {
     pollCommandQueue();
-    // Bail early if currentCommand changes at all
-    if (currentCommand != stateAtStart) return false;
+    if (currentCommand != stateAtStart) return false; // Any change aborts
     vTaskDelay(pdMS_TO_TICKS(1));
   }
   return true;
 }
 
-// Used in continuous gaits (walk, turn, etc.)
+// Hold check for continuous gaits (walk, turn, etc.). Returns true if the robot
+// stayed in expectedState for the full duration; false if the state changed OR
+// the held-gait watchdog expired.
 bool pressingCheck(MovementState expectedState, int ms) {
   unsigned long start = millis();
   while (millis() - start < ms) {
@@ -667,8 +669,7 @@ bool pressingCheck(MovementState expectedState, int ms) {
       Serial.println("Hold watchdog: refresh lost, stopping");
       return false;
     }
-    // Bail early if currentCommand does not remain in the expected state
-    if (currentCommand != expectedState) return false;
+    if (currentCommand != expectedState) return false; // Left expected state
 
     vTaskDelay(pdMS_TO_TICKS(1));
   }

@@ -74,17 +74,28 @@ extern bool interruptibleDelay(int ms);
 extern bool pressingCheck(MovementState expectedState, int ms);
 
 // ======================================================================
-// PLAYBACK ENGINE PROTOTYPES
+// PROTOTYPES
 // ======================================================================
 
-// Plays a pose sequence once. Returns true if it completed, false if a
-// new command interrupted it (in which case currentCommand already
-// holds the new command — do NOT overwrite it).
+/**
+ * @brief Maps a state to its sequence.
+ * @param state Movement state to look up.
+ * @return Pointer to the matching Sequence, or nullptr if none (e.g. STATE_IDLE).
+ */
+const Sequence* lookupSequence(MovementState state);
+
+/**
+ * @brief Plays a pose sequence once.
+ * @param seq Sequence to play.
+ * @return true if it completed; false if a new command interrupted it.
+ */
 bool playPose(const Sequence& seq);
 
-// Plays one full cycle of a gait while `holdState` remains active.
-// On abort, applies stand targets as graceful recovery and returns false.
+/**
+ * @brief Plays one full cycle of a gait while `holdState` remains active.
+ * @param seq Sequence to play.
+ * @param holdState State that must stay active for the cycle to continue.
+ * @return true if the cycle completed; false if aborted, in which case
+ *         stand targets are applied as graceful recovery.
+ */
 bool playGaitCycle(const Sequence& seq, MovementState holdState);
-
-// Maps a state to its sequence, or nullptr if none (e.g. STATE_IDLE).
-const Sequence* lookupSequence(MovementState state);

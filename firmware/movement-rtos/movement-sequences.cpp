@@ -169,7 +169,7 @@ static const Keyframe TURN_RIGHT_FRAMES[] = {
 const Sequence SEQ_TURN_RIGHT = { TURN_RIGHT_FRAMES, FRAME_COUNT(TURN_RIGHT_FRAMES), 0, 1, true, false, false };
 
 // ======================================================================
-// STATE → SEQUENCE DISPATCH
+// STATE -> SEQUENCE DISPATCH
 // ======================================================================
 
 struct SequenceEntry {
@@ -211,7 +211,7 @@ const Sequence* lookupSequence(MovementState state) {
 // PLAYBACK ENGINE
 // ======================================================================
 
-// Applies one keyframe's targets, skipping NC entries
+// Private helper to apply one keyframe's targets, skipping NC entries
 static void applyKeyframe(const Keyframe& kf) {
   for (int i = 0; i < 8; i++) {
     if (kf.angles[i] != NC) setServoTarget(i, kf.angles[i]);
@@ -242,6 +242,7 @@ bool playPose(const Sequence& seq) {
 bool playGaitCycle(const Sequence& seq, MovementState holdState) {
   for (uint8_t f = 0; f < seq.frameCount; f++) {
     applyKeyframe(seq.frames[f]);
+    // Apply stand targets if gait no longer held
     if (!pressingCheck(holdState, seq.frames[f].durationMs)) {
       applyKeyframe(STAND_FRAMES[0]);
       return false;
