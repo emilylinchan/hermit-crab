@@ -45,37 +45,46 @@ enum MovementState : uint8_t {
 };
 
 // ======================================================================
+// KEYFRAME DATA MODEL
+// ======================================================================
+
+const uint8_t NC = 255;  // No change
+
+struct Keyframe {
+  uint8_t  angles[8];   // 0–180 deg per servo (ServoName index order), or NC
+  uint16_t durationMs;  // Time allowed for this frame (travel + hold)
+};
+
+struct Sequence {
+  const Keyframe* frames;
+  uint8_t         frameCount;
+  uint8_t         loopStart;    // First frame of the repeated section
+  uint8_t         repeatCount;  // Times the repeated section plays (>= 1)
+  bool            isGait;       // true = continuous, held-state cycle
+  bool            standAtEnd;   // true = return to stand when finished
+  bool            sticky;       // true = hold state after completion 
+};
+
+// ======================================================================
 // EXTERNAL GLOBALS
 // ======================================================================
 
-extern int frameDelay;
-
-extern void setServoAngle(uint8_t channel, int angle);
-extern bool pressingCheck(MovementState expectedState, int ms);
-extern void checkSerial();
+extern void setServoTarget(uint8_t channel, int angle);
 extern bool interruptibleDelay(int ms);
+extern bool pressingCheck(MovementState expectedState, int ms);
 
 // ======================================================================
-// POSE & MOVEMENT SEQUENCE PROTOTYPES
+// PLAYBACK ENGINE PROTOTYPES
 // ======================================================================
 
-void runRestPose();
-void applyStandPose(); // Silent stand — servo writes only, no serial print
-void runStandPose();
-void runWavePose();
-void runDancePose();
-void runSwimPose();
-void runPointPose();
-void runPushupPose();
-void runBowPose();
-void runCutePose();
-void runFreakyPose();
-void runWormPose();
-void runShakePose();
-void runShrugPose();
-void runDeadPose();
-void runCrabPose();
-void runWalkPose();
-void runWalkBackward();
-void runTurnLeft();
-void runTurnRight();
+// Plays a pose sequence once. Returns true if it completed, false if a
+// new command interrupted it (in which case currentCommand already
+// holds the new command — do NOT overwrite it).
+bool playPose(const Sequence& seq);
+
+// Plays one full cycle of a gait while `holdState` remains active.
+// On abort, applies stand targets as graceful recovery and returns false.
+bool playGaitCycle(const Sequence& seq, MovementState holdState);
+
+// Maps a state to its sequence, or nullptr if none (e.g. STATE_IDLE).
+const Sequence* lookupSequence(MovementState state);

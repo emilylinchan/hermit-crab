@@ -72,7 +72,7 @@ const char INDEX_HTML[] PROGMEM = R"rawliteral(
       color: #fff;
       cursor: pointer;
       transition: background 0.1s, transform 0.1s;
-      touch-action: none;
+      touch-action: none; 
     }
     .dpad button:active { background: #3a5a3a; transform: scale(0.94); }
     .spacer { visibility: hidden; }
@@ -195,8 +195,6 @@ LABELS.forEach((label, i) => {
            oninput="updateDisplay(${i}, this.value, this.nextElementSibling)">
     <span class="motor-val">90°</span>`;
   const slider = row.querySelector('input');
-  // 'change' fires on release no matter where the pointer ends up —
-  // unlike mouseup/touchend, which miss a drag that leaves the element
   slider.addEventListener('change', () => sendMotor(slider));
   container.appendChild(row);
 });
@@ -206,24 +204,11 @@ let moveInterval = null;
 function move(cmd) {
   if (moveInterval) return;   // already moving — don't stack a second interval
   sendCmd(cmd);
-  // Re-send every 200 ms while held — keeps state alive
-  // if a future watchdog is added
   moveInterval = setInterval(() => sendCmd(cmd), 200);
 }
 
-function sendCmd(cmd) {
-  if (moveInterval && cmd === 'stop') {
-    clearInterval(moveInterval);
-    moveInterval = null;
-  }
-  fetch('/cmd?c=' + cmd)
-    .then(r => r.text())
-    .then(t => document.getElementById('status').textContent = t)
-    .catch(() => document.getElementById('status').textContent = 'error');
-}
-
-// D-pad wiring. Pointer capture routes pointerup back to the button even
-// if the finger/cursor drifted off it, so 'stop' always fires
+// D-pad wiring. Pointer capture routes pointerup back to the button
+// even if the finger/cursor drifted off it, so 'stop' always fires
 document.querySelectorAll('.dpad button[data-cmd]').forEach(btn => {
   btn.addEventListener('pointerdown', e => {
     e.preventDefault();
@@ -242,7 +227,17 @@ window.addEventListener('blur', () => {
   if (moveInterval) sendCmd('stop');
 });
 
-// Poll the real state so the label reflects poses finishing on their own
+function sendCmd(cmd) {
+  if (moveInterval && cmd === 'stop') {
+    clearInterval(moveInterval);
+    moveInterval = null;
+  }
+  fetch('/cmd?c=' + cmd)
+    .then(r => r.text())
+    .then(t => document.getElementById('status').textContent = t)
+    .catch(() => document.getElementById('status').textContent = 'error');
+}
+
 setInterval(() => {
   fetch('/status')
     .then(r => r.json())
@@ -251,7 +246,7 @@ setInterval(() => {
 }, 500);
 
 function updateDisplay(idx, val, display) {
-  display.textContent = val + '°';
+  display.textContent = val + '°';       
 }
 
 function motorMove(idx, val, display) {

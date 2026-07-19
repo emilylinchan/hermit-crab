@@ -17,7 +17,6 @@ const char* AP_SSID       = "HermitCrab";
 const char* AP_PASS       = "12345678";   // NULL for open network
 const bool  AP_HIDDEN     = false;
 const uint8_t AP_MAX_CONN = 2;
-
 IPAddress AP_IP(192, 168, 0, 1);
 IPAddress AP_GATEWAY(192, 168, 0, 1);
 IPAddress AP_SUBNET(255, 255, 255, 0);
@@ -44,9 +43,14 @@ const uint8_t servoPins[8] = {13, 14, 23, 16, 17, 18, 19, 33};
 const uint16_t MIN_PULSE = 833;   
 const uint16_t MAX_PULSE = 2167;  
 
-// ---- Tuning ----
-int frameDelay        = 100;  // ms between gait frames
-int motorCurrentDelay = 5;    // ms between servo writes (prevents brownout)
+// ---- Hold Watchdog ----
+// Web D-pad re-sends its gait every 200ms while held; if refreshes stop
+// (browser closed, button released, WiFi dropped), auto-stop the robot.
+const uint32_t HOLD_TIMEOUT_MS = 600;  // ms without refresh before auto-stop (3 missed refreshes)
+
+// ---- Motion Interpolation ----
+const int INTERP_TICK_MS = 20;   // ms per interpolator tick (50 Hz)
+int MAX_SPEED            = 600;  // deg/s max angular velocity (lower = smoother, higher = snappier)
 
 // ---- Subtrim ----
 int8_t servoSubtrim[8] = {0, 0, 0, 0, 0, 0, 0, 0};
@@ -58,17 +62,33 @@ int8_t servoSubtrim[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 Servo servos[8];
 Adafruit_SSD1306 display(OLED_WIDTH, OLED_HEIGHT, &Wire, OLED_RESET);
 
-SemaphoreHandle_t servoMutex;
 SemaphoreHandle_t displayMutex;
 
 // ======================================================================
-// MOVEMENT
+// SERVO INTERPOLATION STATE
+// ======================================================================
+
+float          servoPos[8];     // Where each servo is now (deg)
+volatile float servoTarget[8];  // Where each servo is headed (deg)
+
+// ======================================================================
+// STATE MACHINE
 // ======================================================================
 
 volatile MovementState currentCommand = STATE_IDLE;
 QueueHandle_t commandQueue;
 
-volatile MovementState heldPose = STATE_IDLE;
+// held=true means the sender will keep re-sending (web D-pad); watchdog
+// stops the robot if refreshes lapse. Serial commands/poses send false.
+struct Command {
+  MovementState state;
+  bool          held;
+};
+
+// Watchdog bookkeeping. Written ONLY from motionTask context (via
+// pollCommandQueue — the single point where commands leave the queue)
+volatile bool          holdWatchdog      = false;  // armed by a held command
+volatile unsigned long lastHoldRefreshMs = 0;      // millis() of last held refresh
 
 struct CommandEntry {
   const char*   str;
@@ -100,11 +120,10 @@ static const CommandEntry COMMAND_TABLE[] = {
 static const int COMMAND_TABLE_SIZE = sizeof(COMMAND_TABLE) / sizeof(COMMAND_TABLE[0]);
 
 // ======================================================================
-// FACE BITMAPS
+// FACE LOOKUP TABLE
 // ======================================================================
 
-// Track last state to only redraw face bitmap on a transition
-volatile MovementState lastDisplayedState = STATE_IDLE; 
+volatile MovementState lastDisplayedState = STATE_IDLE;
 
 struct FaceEntry {
   MovementState state;
@@ -112,7 +131,7 @@ struct FaceEntry {
 };
 
 static const FaceEntry FACE_TABLE[] = {
-  { STATE_IDLE,     nullptr              }, // Leave the current face on screen (no update)
+  { STATE_IDLE,     nullptr              },
   { STATE_STAND,    epd_bitmap_stand     },
   { STATE_REST,     epd_bitmap_rest      },
   { STATE_FORWARD,  epd_bitmap_walk      },
@@ -149,11 +168,16 @@ byte bufferPos = 0;
 void webServerTask(void* param);
 void serialTask(void* param);
 void motionTask(void* param);
+void interpolatorTask(void* param);
 
-void setServoAngle(uint8_t channel, int angle);
+void setServoTarget(uint8_t channel, int angle);
+void setServoImmediate(uint8_t channel, int angle);
+void writeServoHardware(uint8_t channel, float pos);
+void submitCommand(MovementState state, bool held);
+bool pollCommandQueue();
 bool pressingCheck(MovementState expectedState, int ms);
 bool parseMovementCommand(const char* str, MovementState& out);
-const char* stateName(MovementState state);
+const char* commandName(MovementState state);
 void handleSubtrimCommand(const char* buf);
 void checkSerial();
 bool interruptibleDelay(int ms);
@@ -175,10 +199,9 @@ void showFace(MovementState state);
 
 void setup() {
 
-  // FreeRTOS
-  servoMutex = xSemaphoreCreateMutex();
+  // FreeRTOS setup
   displayMutex = xSemaphoreCreateMutex();
-  commandQueue = xQueueCreate(1, sizeof(MovementState));
+  commandQueue = xQueueCreate(1, sizeof(Command));
 
   // Initialize serial communication
   Serial.begin(115200);
@@ -204,15 +227,22 @@ void setup() {
   }
   delay(10);
 
+  // Seed the interpolator: snap every servo to rest (90°) once
+  for (int i = 0; i < 8; i++) {
+    setServoImmediate(i, 90);
+    delay(5);
+  }
+
   // Initialize wifi access point
   setupWiFi();
   setupWebServer();
 
-  // Core 0 - I/0 tasks
+  // Core 0 - I/O tasks
   xTaskCreatePinnedToCore(webServerTask, "WebServer", 4096, NULL, 1, NULL, 0);
   xTaskCreatePinnedToCore(serialTask, "Serial", 2048, NULL, 1, NULL, 0);
 
-  // Core 1 - motion (higher priority)
+  // Core 1 - movement tasks
+  xTaskCreatePinnedToCore(interpolatorTask, "Interp", 4096, NULL, 3, NULL, 1);
   xTaskCreatePinnedToCore(motionTask, "Motion", 8192, NULL, 2, NULL, 1);
 
   // Startup message
@@ -221,6 +251,10 @@ void setup() {
   Serial.println("-----------------------------------");
   Serial.print  (" Web UI: http://");
   Serial.println(AP_IP);
+  Serial.println();
+  Serial.print  ("Interpolator: 50 Hz tick, max ");
+  Serial.print  (MAX_SPEED);
+  Serial.println(" deg/s");
   Serial.println();
   Serial.println("Serial Commands:");
   Serial.println("  rest, stand, walk, back, left, right");
@@ -242,7 +276,7 @@ void setup() {
 // ======================================================================
 
 void loop() {
-  vTaskDelete(NULL); // No longer needed with FreeRTOS implementation
+  vTaskDelete(NULL); // Arduino loop not needed with FreeRTOS implementation
 }
 
 // ======================================================================
@@ -252,94 +286,89 @@ void loop() {
 void webServerTask(void* param) {
   for (;;) {
     server.handleClient();
-    vTaskDelay(pdMS_TO_TICKS(5));
+    vTaskDelay(pdMS_TO_TICKS(5)); // Yield for 5ms between polls
   }
 }
 
 void serialTask(void* param) {
   for (;;) {
     checkSerial();
-    vTaskDelay(pdMS_TO_TICKS(10));
+    vTaskDelay(pdMS_TO_TICKS(10)); // Yield for 10ms between polls
+  }
+}
+
+void interpolatorTask(void* param) {
+  for (;;) {
+    float maxStep = (float)MAX_SPEED * INTERP_TICK_MS / 1000.0f; // Degrees
+
+    for (int i = 0; i < 8; i++) {
+      float target = servoTarget[i];
+      float diff   = target - servoPos[i];
+
+      if (diff != 0.0f) {
+        if      (diff >  maxStep) servoPos[i] += maxStep;
+        else if (diff < -maxStep) servoPos[i] -= maxStep;
+        else                      servoPos[i]  = target;  // arrived
+        writeServoHardware(i, servoPos[i]);
+      }
+      // No write when already at target — servo holds position on its own
+    }
+
+    vTaskDelay(pdMS_TO_TICKS(INTERP_TICK_MS));
   }
 }
 
 void motionTask(void* param) {
   for (;;) {
-    // Pull latest command from queue if one is waiting
-    MovementState incoming;
-    if (xQueueReceive(commandQueue, &incoming, 0) == pdTRUE) {
-      currentCommand = incoming;        
-    }
     
-    // Update face on state change
+    pollCommandQueue();
+
+    // On state transition: update face + announce
     if (currentCommand != lastDisplayedState) {
       showFace(currentCommand);
+      Serial.print("State: ");
+      Serial.println(commandName(currentCommand));
       lastDisplayedState = currentCommand;
     }
 
-    // Dispatch state machine
-    MovementState running = currentCommand; 
-
-    switch (running) {
-      case STATE_IDLE:                          break;
-
-      // Gaits
-      case STATE_FORWARD:  runWalkPose();       break;
-      case STATE_BACKWARD: runWalkBackward();   break;
-      case STATE_LEFT:     runTurnLeft();       break;
-      case STATE_RIGHT:    runTurnRight();      break;
-
-      // Static poses
-      case STATE_STAND:    runStandPose();      break;
-      case STATE_REST:     runRestPose();       break;
-      case STATE_DEAD:     runDeadPose();       break;
-
-      // One-shot poses
-      case STATE_WAVE:     runWavePose();       break;
-      case STATE_DANCE:    runDancePose();      break;
-      case STATE_SWIM:     runSwimPose();       break;
-      case STATE_POINT:    runPointPose();      break;
-      case STATE_PUSHUP:   runPushupPose();     break;
-      case STATE_BOW:      runBowPose();        break;
-      case STATE_CUTE:     runCutePose();       break;
-      case STATE_FREAKY:   runFreakyPose();     break;
-      case STATE_WORM:     runWormPose();       break;
-      case STATE_SHAKE:    runShakePose();      break;
-      case STATE_SHRUG:    runShrugPose();      break;
-      case STATE_CRAB:     runCrabPose();       break;
-      default:                                  break;
-    }
-
-    // Only one-shot poses return to idle, and only if nothing new arrived while they ran
-    bool isGait = (running == STATE_FORWARD || running == STATE_BACKWARD ||
-                   running == STATE_LEFT    || running == STATE_RIGHT);
-    if (!isGait && running != STATE_IDLE && currentCommand == running) {
-      currentCommand = STATE_IDLE;
-    }
-
-    // Face persists for static poses
-    bool keepsFace = (running == STATE_DEAD || running == STATE_STAND || running == STATE_REST);
-    if (running != STATE_IDLE && currentCommand == STATE_IDLE) {
-      if (keepsFace) {
-        heldPose = running;   
-      } else {
-        heldPose = STATE_IDLE;
-        drawFace(epd_bitmap_stand);
+    // Dispatch: state -> sequence table lookup
+    const Sequence* seq = lookupSequence(currentCommand);
+    if (seq != nullptr) {
+      if (seq->isGait) {
+        // One gait cycle; replays if still held. Abort-to-idle recovers to
+        // stand posture, so match the face (abort into another command is
+        // already handled by the transition block above).
+        if (!playGaitCycle(*seq, currentCommand) && currentCommand == STATE_IDLE) {
+          drawFace(epd_bitmap_stand);
+        }
+      } 
+      else if (playPose(*seq)) {
+        if (seq->sticky) {
+          // Sticky pose (STAND/REST/DEAD): hold state
+          while (!pollCommandQueue()) vTaskDelay(pdMS_TO_TICKS(10));
+        } 
+        else {
+          // Self-transition to IDLE only on full completion
+          currentCommand = STATE_IDLE;
+          // Pose glided back to stand (standAtEnd) — match the face
+          if (seq->standAtEnd) drawFace(epd_bitmap_stand);
+        }
       }
     }
-    
-    vTaskDelay(pdMS_TO_TICKS(1));
+
+    vTaskDelay(pdMS_TO_TICKS(1));  // Yield briefly when idle
   }
 }
 
 
 // ======================================================================
-// OLED SETUP & FACE DISPLAY
+// OLED FACE DISPLAY
 // ======================================================================
 
 void setupOLED() {
   if (!display.begin(SSD1306_SWITCHCAPVCC, OLED_I2C_ADDR)) {
     Serial.println("SSD1306 not found — check wiring and I2C address");
+    // Robot continues to work without the display
     return;
   }
   display.clearDisplay();
@@ -347,18 +376,8 @@ void setupOLED() {
   Serial.println("OLED initialized");
 }
 
-void drawFace(const unsigned char* bitmap) {
-  // Thread-safe writing to OLED
-  xSemaphoreTake(displayMutex, portMAX_DELAY);
-  display.clearDisplay();
-  display.drawBitmap(0, 0, bitmap, OLED_WIDTH, OLED_HEIGHT, SSD1306_WHITE);
-  display.display();
-  xSemaphoreGive(displayMutex);
-}
-
 void showFace(MovementState state) {
   const unsigned char* bitmap = nullptr;
-
   // Match face bitmap to movement state
   for (int i = 0; i < FACE_TABLE_SIZE; i++) {
     if (FACE_TABLE[i].state == state) {
@@ -366,10 +385,16 @@ void showFace(MovementState state) {
       break;
     }
   }
-
   if (bitmap == nullptr) return;
-
   drawFace(bitmap);
+}
+
+void drawFace(const unsigned char* bitmap) {
+  xSemaphoreTake(displayMutex, portMAX_DELAY);
+  display.clearDisplay();
+  display.drawBitmap(0, 0, bitmap, OLED_WIDTH, OLED_HEIGHT, SSD1306_WHITE);
+  display.display();
+  xSemaphoreGive(displayMutex);
 }
 
 // ======================================================================
@@ -405,10 +430,8 @@ void handleRoot() {
   server.send_P(200, "text/html", INDEX_HTML);
 }
 
-// GET /cmd?c=<command>
-// Accepts any string from COMMAND_TABLE
-// Movement states (walk/back/left/right) are held — caller re-sends while held
-// Pose states run once and self-transition to STATE_IDLE once done
+// GET /cmd?c=<command> — accepts any COMMAND_TABLE string. Movement states
+// are held (caller re-sends); poses run once and self-transition to STATE_IDLE.
 void handleCmd() {
   if (!server.hasArg("c")) {
     server.send(400, "text/plain", "missing arg");
@@ -417,9 +440,10 @@ void handleCmd() {
   String cmdStr = server.arg("c");
   MovementState parsed;
   if (parseMovementCommand(cmdStr.c_str(), parsed)) {
-    xQueueOverwrite(commandQueue, &parsed);
+    const Sequence* seq = lookupSequence(parsed);
+    submitCommand(parsed, seq != nullptr && seq->isGait);
     server.send(200, "text/plain", cmdStr);
-  } 
+  }
   else {
     server.send(400, "text/plain", "unknown");
   }
@@ -437,24 +461,24 @@ void handleMotor() {
     server.send(400, "text/plain", "out of range");
     return;
   }
-  MovementState idle = STATE_IDLE; // stop any running animation first
-  xQueueOverwrite(commandQueue, &idle);
-  setServoAngle(idx, angle);
+  submitCommand(STATE_IDLE, false);
+  setServoTarget(idx, angle);
   server.send(200, "text/plain", "ok");
 }
 
 // GET /status — lightweight JSON for future scripting / Python use
 void handleStatus() {
   MovementState state = currentCommand;
-  MovementState reported = (state == STATE_IDLE && heldPose != STATE_IDLE)
-                             ? (MovementState)heldPose : state;
   String json = "{\"state\":";
   json += String((int)state);
   json += ",\"name\":\"";
-  json += stateName(reported);
-  json += "\",\"frameDelay\":";
-  json += String(frameDelay);
-  json += "}";
+  json += commandName(state);
+  json += "\",\"pos\":[";
+  for (int i = 0; i < 8; i++) {
+    json += String((int)(servoPos[i] + 0.5f));
+    if (i < 7) json += ",";
+  }
+  json += "]}";
   server.send(200, "application/json", json);
 }
 
@@ -473,15 +497,15 @@ bool parseMovementCommand(const char* str, MovementState& out) {
   return false;
 }
 
-// Reverse lookup: state -> command string (STATE_IDLE -> "stop")
-const char* stateName(MovementState state) {
+// Reverse lookup: state → command string, for transition announcements
+const char* commandName(MovementState state) {
   for (int i = 0; i < COMMAND_TABLE_SIZE; i++) {
     if (COMMAND_TABLE[i].state == state) return COMMAND_TABLE[i].str;
   }
-  return "unknown";
+  return "?";
 }
 
-// Handles all "subtrim ..." variants
+// Handles all "subtrim ..." command variants
 void handleSubtrimCommand(const char* buf) {
   if (strcmp(buf, "subtrim save") == 0) {
     Serial.println("Copy this into the code:");
@@ -491,10 +515,12 @@ void handleSubtrimCommand(const char* buf) {
       if (i < 7) Serial.print(", ");
     }
     Serial.println("};");
-  } else if (strcmp(buf, "subtrim reset") == 0) {
+  } 
+  else if (strcmp(buf, "subtrim reset") == 0) {
     for (int i = 0; i < 8; i++) servoSubtrim[i] = 0;
     Serial.println("All subtrim values reset to 0");
-  } else if (strncmp(buf, "subtrim ", 8) == 0) {
+  } 
+  else if (strncmp(buf, "subtrim ", 8) == 0) {
     int trimMotor, trimValue;
     if (sscanf(buf + 8, "%d %d", &trimMotor, &trimValue) == 2) {
       if (trimMotor >= 0 && trimMotor < 8 && trimValue >= -90 && trimValue <= 90) {
@@ -503,11 +529,13 @@ void handleSubtrimCommand(const char* buf) {
         Serial.print(" subtrim -> ");
         if (trimValue >= 0) Serial.print("+");
         Serial.println(trimValue);
-      } else {
+      } 
+      else {
         Serial.println("Invalid — motor: 0-7, value: -90 to +90");
       }
     }
-  } else {
+  } 
+  else {
     Serial.println("Subtrim values:");
     for (int i = 0; i < 8; i++) {
       Serial.print("  Motor "); Serial.print(i); Serial.print(": ");
@@ -517,72 +545,110 @@ void handleSubtrimCommand(const char* buf) {
   }
 }
 
-// Writes a servo angle, applying subtrim offset and clamping
-void setServoAngle(uint8_t channel, int angle) {
+// ---- Servo write path ----
+// setServoTarget(): normal path, safe from any task — interpolator moves it there.
+// setServoImmediate(): boot-only snap bypassing interpolation (single-owner rule
+// after tasks start — only interpolatorTask may touch servo hardware).
+// writeServoHardware(): applies subtrim at write time so trim changes take
+// effect immediately without disturbing targets.
+
+void setServoTarget(uint8_t channel, int angle) {
   if (channel >= 8) return;
-  int adjusted = constrain(angle + servoSubtrim[channel], 0, 180);
+  servoTarget[channel] = (float)constrain(angle, 0, 180);
+}
+
+void setServoImmediate(uint8_t channel, int angle) {
+  if (channel >= 8) return;
+  float a = (float)constrain(angle, 0, 180);
+  servoPos[channel]    = a;
+  servoTarget[channel] = a;
+  writeServoHardware(channel, a);
+}
+
+void writeServoHardware(uint8_t channel, float pos) {
+  int adjusted = constrain((int)(pos + 0.5f) + servoSubtrim[channel], 0, 180);
   int pulseUs  = map(adjusted, 0, 180, MIN_PULSE, MAX_PULSE);
-
-  // Thread-safe writing to servos
-  xSemaphoreTake(servoMutex, portMAX_DELAY);
   servos[channel].writeMicroseconds(pulseUs);
-  xSemaphoreGive(servoMutex);
-
-  delay(motorCurrentDelay); // Current limiter
 }
 
 // Reads and processes any pending serial bytes mid-animation
 void checkSerial() {
   while (Serial.available()) {
     char c = Serial.read();
+
+    // Check for termination character
     if (c == '\n' || c == '\r') {
       if (bufferPos > 0) {
         commandBuffer[bufferPos] = '\0';
         bufferPos = 0;
 
+        // Parse command
         MovementState parsed;
         if (parseMovementCommand(commandBuffer, parsed)) {
-          xQueueOverwrite(commandQueue, &parsed);
+          submitCommand(parsed, false);
           Serial.print("Command: "); Serial.println(commandBuffer);
-        } else if (strncmp(commandBuffer, "subtrim", 7) == 0) {
+        } 
+        else if (strncmp(commandBuffer, "subtrim", 7) == 0) {
           handleSubtrimCommand(commandBuffer);
-        } else if (strncmp(commandBuffer, "all ", 4) == 0) {
+        } 
+        else if (strncmp(commandBuffer, "all ", 4) == 0) {
           int angle;
           if (sscanf(commandBuffer + 4, "%d", &angle) == 1) {
-            for (int i = 0; i < 8; i++) setServoAngle(i, angle);
+            for (int i = 0; i < 8; i++) setServoTarget(i, angle);
             Serial.print("All servos -> "); Serial.println(angle);
           }
-        } else {
+        } 
+        else {
           int motorNum, angle;
           if (sscanf(commandBuffer, "%d %d", &motorNum, &angle) == 2) {
             if (motorNum >= 0 && motorNum < 8) {
-              setServoAngle(motorNum, angle);
+              setServoTarget(motorNum, angle);
               Serial.print("Servo "); Serial.print(motorNum);
               Serial.print(" -> "); Serial.println(angle);
             } else {
               Serial.println("Invalid motor number (0-7)");
             }
-          } else {
+          } 
+          else {
             Serial.print("Unknown command: "); Serial.println(commandBuffer);
           }
         }
       }
-    } else if (bufferPos < sizeof(commandBuffer) - 1) {
+    } 
+    // Fill buffer if space remains
+    else if (bufferPos < sizeof(commandBuffer) - 1) {
       commandBuffer[bufferPos++] = c;
     }
   }
 }
 
+// ---- Command queue helpers ----
+// submitCommand(): commands enter here, safe from any task.
+// pollCommandQueue(): commands leave here, called only from motionTask context
+// (loop, interruptibleDelay, pressingCheck) — the single writer of currentCommand
+// and the watchdog state, so no locks needed.
+
+void submitCommand(MovementState state, bool held) {
+  Command cmd = { state, held };
+  xQueueOverwrite(commandQueue, &cmd);
+}
+
+bool pollCommandQueue() {
+  Command incoming;
+  if (xQueueReceive(commandQueue, &incoming, 0) != pdTRUE) return false;
+  currentCommand = incoming.state;
+  holdWatchdog   = incoming.held;
+  if (incoming.held) lastHoldRefreshMs = millis();
+  return true;
+}
+
 // Used in animated poses (wave, dance, etc.)
-// Bails early if currentCommand changes at all
 bool interruptibleDelay(int ms) {
   MovementState stateAtStart = currentCommand;
   unsigned long start = millis();
   while (millis() - start < ms) {
-    MovementState incoming;
-    if (xQueueReceive(commandQueue, &incoming, 0) == pdTRUE) {
-      currentCommand = incoming;
-    }
+    pollCommandQueue();
+    // Bail early if currentCommand changes at all
     if (currentCommand != stateAtStart) return false;
     vTaskDelay(pdMS_TO_TICKS(1));
   }
@@ -590,20 +656,21 @@ bool interruptibleDelay(int ms) {
 }
 
 // Used in continuous gaits (walk, turn, etc.)
-// Bails early if currentCommand does not remain in the specific expected state
 bool pressingCheck(MovementState expectedState, int ms) {
   unsigned long start = millis();
   while (millis() - start < ms) {
-    // Pull any incoming command
-    MovementState incoming;
-    if (xQueueReceive(commandQueue, &incoming, 0) == pdTRUE) {
-      currentCommand = incoming;
-    }
-    if (currentCommand != expectedState) {
-      applyStandPose(); // Explicit reset to neutral before the next state takes over
+    pollCommandQueue();
+    // Watchdog: held gait, but no refresh within the timeout -> stop
+    if (holdWatchdog && millis() - lastHoldRefreshMs > HOLD_TIMEOUT_MS) {
+      holdWatchdog   = false;
+      currentCommand = STATE_IDLE;
+      Serial.println("Hold watchdog: refresh lost, stopping");
       return false;
     }
-    vTaskDelay(pdMS_TO_TICKS(1)); // Yield to the scheduler instead of burning CPU
+    // Bail early if currentCommand does not remain in the expected state
+    if (currentCommand != expectedState) return false;
+
+    vTaskDelay(pdMS_TO_TICKS(1));
   }
   return true;
 }

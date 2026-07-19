@@ -1,392 +1,251 @@
 #include "movement-sequences.h"
 
+// Derives frameCount from the array itself
+#define FRAME_COUNT(f) ((uint8_t)(sizeof(f) / sizeof(Keyframe)))
+
 // ======================================================================
-// POSES
+// STATIC POSES
 // ======================================================================
 
-// ---------- STATIC POSES ----------
-void runRestPose() {
-  Serial.println("REST");
-  for (int i = 0; i < 8; i++) setServoAngle(i, 90);
-}
+static const Keyframe STAND_FRAMES[] = {
+  { {135,  45,  45, 135,   0, 180,   0, 180}, 400 },
+};
+const Sequence SEQ_STAND = { STAND_FRAMES, FRAME_COUNT(STAND_FRAMES), 0, 1, false, false, true };
 
-// Silent servo writes only — used as a setup/reset step inside other poses
-void applyStandPose() {
-  setServoAngle(R1, 135);
-  setServoAngle(R2, 45);
-  setServoAngle(L1, 45);
-  setServoAngle(L2, 135);
-  setServoAngle(R4, 0);
-  setServoAngle(R3, 180);
-  setServoAngle(L3, 0);
-  setServoAngle(L4, 180);
-}
+static const Keyframe REST_FRAMES[] = {
+  { { 90,  90,  90,  90,  90,  90,  90,  90}, 400 },
+};
+const Sequence SEQ_REST = { REST_FRAMES, FRAME_COUNT(REST_FRAMES), 0, 1, false, false, true };
 
-void runStandPose() {
-  Serial.println("STAND");
-  applyStandPose();
-}
+static const Keyframe DEAD_FRAMES[] = {
+  { {135,  45,  45, 135,   0, 180,   0, 180}, 200 },  // stand
+  { { NC,  NC,  NC,  NC,  90,  90,  90,  90},   0 },  // collapse
+};
+const Sequence SEQ_DEAD = { DEAD_FRAMES, FRAME_COUNT(DEAD_FRAMES), 0, 1, false, false, true };
 
-// ---------- ANIMATED POSES ----------
-void runWavePose() {
-  Serial.println("WAVE");
-  applyStandPose();
-  if (!interruptibleDelay(200)) return;
-  setServoAngle(R4, 80);
-  setServoAngle(L3, 180);
-  setServoAngle(L2, 90);
-  setServoAngle(R1, 100);
-  if (!interruptibleDelay(200)) return;
-  setServoAngle(L3, 180);
-  if (!interruptibleDelay(300)) return;
-  for (int i = 0; i < 4; i++) {
-    setServoAngle(L3, 180);
-    if (!interruptibleDelay(300)) return;
-    setServoAngle(L3, 100);
-    if (!interruptibleDelay(300)) return;
-  }
-  applyStandPose();
-}
+// ======================================================================
+// ANIMATED POSES
+// ======================================================================
 
-void runDancePose() {
-  Serial.println("DANCE");
-  setServoAngle(R1, 90);
-  setServoAngle(R2, 90);
-  setServoAngle(L1, 90);
-  setServoAngle(L2, 90);
-  setServoAngle(R4, 160);
-  setServoAngle(R3, 160);
-  setServoAngle(L3, 10);
-  setServoAngle(L4, 10);
-  if (!interruptibleDelay(300)) return;
-  for (int i = 0; i < 5; i++) {
-    setServoAngle(R4, 115);
-    setServoAngle(R3, 115);
-    setServoAngle(L3, 10);
-    setServoAngle(L4, 10);
-    if (!interruptibleDelay(300)) return;
-    setServoAngle(R4, 160);
-    setServoAngle(R3, 160);
-    setServoAngle(L3, 65);
-    setServoAngle(L4, 65);
-    if (!interruptibleDelay(300)) return;
-  }
-  applyStandPose();
-}
+static const Keyframe WAVE_FRAMES[] = {
+  { {135,  45,  45, 135,   0, 180,   0, 180}, 200 },  // stand
+  { { NC,  NC,  NC,  NC,  NC,  NC, 180,  NC}, 300 },  // -- loop: arm up
+  { { NC,  NC,  NC,  NC,  NC,  NC, 100,  NC}, 300 },  // -- loop: arm down
+};
+const Sequence SEQ_WAVE = { WAVE_FRAMES, FRAME_COUNT(WAVE_FRAMES), 1, 4, false, true, false };
 
-void runSwimPose() {
-  Serial.println("SWIM");
-  runRestPose();
-  for (int i = 0; i < 4; i++) {
-    setServoAngle(R1, 135);
-    setServoAngle(R2, 45);
-    setServoAngle(L1, 45);
-    setServoAngle(L2, 135);
-    if (!interruptibleDelay(400)) return;
-    setServoAngle(R1, 90);
-    setServoAngle(R2, 90);
-    setServoAngle(L1, 90);
-    setServoAngle(L2, 90);
-    if (!interruptibleDelay(400)) return;
-  }
-  applyStandPose();
-}
+static const Keyframe DANCE_FRAMES[] = {
+  { { 90,  90,  90,  90, 160, 160,  10,  10}, 300 },  // crouch, shells out
+  { { NC,  NC,  NC,  NC, 115, 115,  10,  10}, 300 },  // -- loop: right side dips
+  { { NC,  NC,  NC,  NC, 160, 160,  65,  65}, 300 },  // -- loop: left side dips
+};
+const Sequence SEQ_DANCE = { DANCE_FRAMES, FRAME_COUNT(DANCE_FRAMES), 1, 5, false, true, false };
 
-void runPointPose() {
-  Serial.println("POINT");
-  setServoAngle(L2, 90);
-  setServoAngle(R1, 135);
-  setServoAngle(R2, 100);
-  setServoAngle(L4, 180);
-  setServoAngle(L1, 25);
-  setServoAngle(L3, 145);
-  setServoAngle(R4, 80);
-  setServoAngle(R3, 170);
-  if (!interruptibleDelay(2000)) return;
-  applyStandPose();
-}
+static const Keyframe SWIM_FRAMES[] = {
+  { { 90,  90,  90,  90,  90,  90,  90,  90},   0 },  // rest posture
+  { {135,  45,  45, 135,  NC,  NC,  NC,  NC}, 400 },  // -- loop: legs sweep out
+  { { 90,  90,  90,  90,  NC,  NC,  NC,  NC}, 400 },  // -- loop: legs pull in
+};
+const Sequence SEQ_SWIM = { SWIM_FRAMES, FRAME_COUNT(SWIM_FRAMES), 1, 4, false, true, false };
 
-void runPushupPose() {
-  Serial.println("PUSHUP");
-  applyStandPose();
-  if (!interruptibleDelay(200)) return;
-  setServoAngle(L1, 0);
-  setServoAngle(R1, 180);
-  setServoAngle(L3, 90);
-  setServoAngle(R3, 90);
-  if (!interruptibleDelay(500)) return;
-  for (int i = 0; i < 4; i++) {
-    setServoAngle(L3, 0);
-    setServoAngle(R3, 180);
-    if (!interruptibleDelay(600)) return;
-    setServoAngle(L3, 90);
-    setServoAngle(R3, 90);
-    if (!interruptibleDelay(500)) return;
-  }
-  applyStandPose();
-}
+static const Keyframe POINT_FRAMES[] = {
+  { {135, 100,  25,  90,  80, 170, 145, 180}, 2000 }, // hold the point
+};
+const Sequence SEQ_POINT = { POINT_FRAMES, FRAME_COUNT(POINT_FRAMES), 0, 1, false, true, false };
 
-void runBowPose() {
-  Serial.println("BOW");
-  applyStandPose();
-  if (!interruptibleDelay(200)) return;
-  setServoAngle(L1, 0);
-  setServoAngle(R1, 180);
-  setServoAngle(L3, 0);
-  setServoAngle(R3, 180);
-  setServoAngle(L2, 180);
-  setServoAngle(R2, 0);
-  setServoAngle(R4, 0);
-  setServoAngle(L4, 180);
-  if (!interruptibleDelay(600)) return;
-  setServoAngle(L3, 90);
-  setServoAngle(R3, 90);
-  if (!interruptibleDelay(3000)) return;
-  applyStandPose();
-}
+static const Keyframe PUSHUP_FRAMES[] = {
+  { {135,  45,  45, 135,   0, 180,   0, 180}, 200 },  // stand
+  { {180,  NC,   0,  NC,  NC,  90,  90,  NC}, 500 },  // front legs brace
+  { { NC,  NC,  NC,  NC,  NC, 180,   0,  NC}, 600 },  // -- loop: down
+  { { NC,  NC,  NC,  NC,  NC,  90,  90,  NC}, 500 },  // -- loop: up
+};
+const Sequence SEQ_PUSHUP = { PUSHUP_FRAMES, FRAME_COUNT(PUSHUP_FRAMES), 2, 4, false, true, false };
 
-void runCutePose() {
-  Serial.println("CUTE");
-  applyStandPose();
-  if (!interruptibleDelay(200)) return;
-  setServoAngle(L2, 160);
-  setServoAngle(R2, 20);
-  setServoAngle(R4, 180);
-  setServoAngle(L4, 0);
-  setServoAngle(L1, 0);
-  setServoAngle(R1, 180);
-  setServoAngle(L3, 180);
-  setServoAngle(R3, 0);
-  if (!interruptibleDelay(200)) return;
-  for (int i = 0; i < 5; i++) {
-    setServoAngle(R4, 180);
-    setServoAngle(L4, 45);
-    if (!interruptibleDelay(300)) return;
-    setServoAngle(R4, 135);
-    setServoAngle(L4, 0);
-    if (!interruptibleDelay(300)) return;
-  }
-  applyStandPose();
-}
+static const Keyframe BOW_FRAMES[] = {
+  { {135,  45,  45, 135,   0, 180,   0, 180},  200 },  // stand
+  { {180,   0,   0, 180,   0, 180,   0, 180},  600 },  // fold legs under
+  { { NC,  NC,  NC,  NC,  NC,  90,  90,  NC}, 3000 },  // dip head, hold bow
+};
+const Sequence SEQ_BOW = { BOW_FRAMES, FRAME_COUNT(BOW_FRAMES), 0, 1, false, true, false };
 
-void runFreakyPose() {
-  Serial.println("FREAKY");
-  applyStandPose();
-  if (!interruptibleDelay(200)) return;
-  setServoAngle(L1, 0);
-  setServoAngle(R1, 180);
-  setServoAngle(L2, 180);
-  setServoAngle(R2, 0);
-  setServoAngle(R4, 90);
-  setServoAngle(R3, 0);
-  if (!interruptibleDelay(200)) return;
-  for (int i = 0; i < 3; i++) {
-    setServoAngle(R3, 25);
-    if (!interruptibleDelay(400)) return;
-    setServoAngle(R3, 0);
-    if (!interruptibleDelay(400)) return;
-  }
-  applyStandPose();
-}
+static const Keyframe CUTE_FRAMES[] = {
+  { {135,  45,  45, 135,   0, 180,   0, 180}, 200 },  // stand
+  { {180,  20,   0, 160, 180,   0, 180,   0}, 200 },  // tuck in, shells up
+  { { NC,  NC,  NC,  NC, 180,  NC,  NC,  45}, 300 },  // -- loop: wiggle right
+  { { NC,  NC,  NC,  NC, 135,  NC,  NC,   0}, 300 },  // -- loop: wiggle left
+};
+const Sequence SEQ_CUTE = { CUTE_FRAMES, FRAME_COUNT(CUTE_FRAMES), 2, 5, false, true, false };
 
-void runWormPose() {
-  Serial.println("WORM");
-  applyStandPose();
-  if (!interruptibleDelay(200)) return;
-  setServoAngle(R1, 180);
-  setServoAngle(R2, 0);
-  setServoAngle(L1, 0);
-  setServoAngle(L2, 180);
-  setServoAngle(R4, 90);
-  setServoAngle(R3, 90);
-  setServoAngle(L3, 90);
-  setServoAngle(L4, 90);
-  if (!interruptibleDelay(200)) return;
-  for (int i = 0; i < 5; i++) {
-    setServoAngle(R3, 45);
-    setServoAngle(L3, 135);
-    setServoAngle(R4, 45);
-    setServoAngle(L4, 135);
-    if (!interruptibleDelay(300)) return;
-    setServoAngle(R3, 135);
-    setServoAngle(L3, 45);
-    setServoAngle(R4, 135);
-    setServoAngle(L4, 45);
-    if (!interruptibleDelay(300)) return;
-  }
-  applyStandPose();
-}
+static const Keyframe FREAKY_FRAMES[] = {
+  { {135,  45,  45, 135,   0, 180,   0, 180}, 200 },  // stand
+  { {180,   0,   0, 180,  90,   0,  NC,  NC}, 200 },  // splay, cock the arm
+  { { NC,  NC,  NC,  NC,  NC,  25,  NC,  NC}, 400 },  // -- loop: twitch out
+  { { NC,  NC,  NC,  NC,  NC,   0,  NC,  NC}, 400 },  // -- loop: twitch back
+};
+const Sequence SEQ_FREAKY = { FREAKY_FRAMES, FRAME_COUNT(FREAKY_FRAMES), 2, 3, false, true, false };
 
-void runShakePose() {
-  Serial.println("SHAKE");
-  applyStandPose();
-  if (!interruptibleDelay(200)) return;
-  setServoAngle(R1, 135);
-  setServoAngle(L1, 45);
-  setServoAngle(L3, 90);
-  setServoAngle(R3, 90);
-  setServoAngle(L2, 90);
-  setServoAngle(R2, 90);
-  if (!interruptibleDelay(200)) return;
-  for (int i = 0; i < 5; i++) {
-    setServoAngle(R4, 45);
-    setServoAngle(L4, 135);
-    if (!interruptibleDelay(300)) return;
-    setServoAngle(R4, 0);
-    setServoAngle(L4, 180);
-    if (!interruptibleDelay(300)) return;
-  }
-  applyStandPose();
-}
+static const Keyframe WORM_FRAMES[] = {
+  { {135,  45,  45, 135,   0, 180,   0, 180}, 200 },  // stand
+  { {180,   0,   0, 180,  90,  90,  90,  90}, 200 },  // flatten out
+  { { NC,  NC,  NC,  NC,  45,  45, 135, 135}, 300 },  // -- loop: ripple one way
+  { { NC,  NC,  NC,  NC, 135, 135,  45,  45}, 300 },  // -- loop: ripple back
+};
+const Sequence SEQ_WORM = { WORM_FRAMES, FRAME_COUNT(WORM_FRAMES), 2, 5, false, true, false };
 
-void runShrugPose() {
-  Serial.println("SHRUG");
-  applyStandPose();
-  if (!interruptibleDelay(200)) return;
-  setServoAngle(R3, 90);
-  setServoAngle(R4, 90);
-  setServoAngle(L3, 90);
-  setServoAngle(L4, 90);
-  if (!interruptibleDelay(1000)) return;
-  setServoAngle(R3, 0);
-  setServoAngle(R4, 180);
-  setServoAngle(L3, 180);
-  setServoAngle(L4, 0);
-  if (!interruptibleDelay(1500)) return;
-  applyStandPose();
-}
+static const Keyframe SHAKE_FRAMES[] = {
+  { {135,  45,  45, 135,   0, 180,   0, 180}, 200 },  // stand
+  { {135,  90,  45,  90,  NC,  90,  90,  NC}, 200 },  // square up
+  { { NC,  NC,  NC,  NC,  45,  NC,  NC, 135}, 300 },  // -- loop: shake right
+  { { NC,  NC,  NC,  NC,   0,  NC,  NC, 180}, 300 },  // -- loop: shake left
+};
+const Sequence SEQ_SHAKE = { SHAKE_FRAMES, FRAME_COUNT(SHAKE_FRAMES), 2, 5, false, true, false };
 
-void runDeadPose() {
-  Serial.println("DEAD");
-  applyStandPose();
-  if (!interruptibleDelay(200)) return;
-  setServoAngle(R3, 90);
-  setServoAngle(R4, 90);
-  setServoAngle(L3, 90);
-  setServoAngle(L4, 90);
-}
+static const Keyframe SHRUG_FRAMES[] = {
+  { {135,  45,  45, 135,   0, 180,   0, 180},  200 },  // stand
+  { { NC,  NC,  NC,  NC,  90,  90,  90,  90}, 1000 },  // shells to midpoint
+  { { NC,  NC,  NC,  NC, 180,   0, 180,   0}, 1500 },  // full shrug, hold
+};
+const Sequence SEQ_SHRUG = { SHRUG_FRAMES, FRAME_COUNT(SHRUG_FRAMES), 0, 1, false, true, false };
 
-void runCrabPose() {
-  Serial.println("CRAB");
-  applyStandPose();
-  if (!interruptibleDelay(200)) return;
-  setServoAngle(R1, 90);
-  setServoAngle(R2, 90);
-  setServoAngle(L1, 90);
-  setServoAngle(L2, 90);
-  setServoAngle(R4, 0);
-  setServoAngle(R3, 180);
-  setServoAngle(L3, 45);
-  setServoAngle(L4, 135);
-  for (int i = 0; i < 5; i++) {
-    setServoAngle(R4, 45);
-    setServoAngle(R3, 135);
-    setServoAngle(L3, 0);
-    setServoAngle(L4, 180);
-    if (!interruptibleDelay(300)) return;
-    setServoAngle(R4, 0);
-    setServoAngle(R3, 180);
-    setServoAngle(L3, 45);
-    setServoAngle(L4, 135);
-    if (!interruptibleDelay(300)) return;
-  }
-  applyStandPose();
-}
+static const Keyframe CRAB_FRAMES[] = {
+  { {135,  45,  45, 135,   0, 180,   0, 180}, 200 },  // stand
+  { { 90,  90,  90,  90,   0, 180,  45, 135},   0 },  // square legs, ready claws
+  { { NC,  NC,  NC,  NC,  45, 135,   0, 180}, 300 },  // -- loop: snip
+  { { NC,  NC,  NC,  NC,   0, 180,  45, 135}, 300 },  // -- loop: snap
+};
+const Sequence SEQ_CRAB = { CRAB_FRAMES, FRAME_COUNT(CRAB_FRAMES), 2, 5, false, true, false };
 
-// ---------- MOVEMENT ANIMATIONS ----------
-void runWalkPose() {
-  static bool announced = false;
-  if (!announced) { Serial.println("WALK FWD"); announced = true; }
+// ======================================================================
+// GAITS
+// ======================================================================
 
-  setServoAngle(R3, 135);
-  setServoAngle(L3, 45);
-  setServoAngle(R2, 100);
-  setServoAngle(L1, 25);
+static const Keyframe WALK_FWD_FRAMES[] = {
+  { { NC, 100,  25,  NC,  NC, 135,  45,  NC}, 100 },
+  { { NC,  NC,  NC,  NC,  NC, 135,   0,  NC}, 100 },
+  { {180,  NC,  NC,  90,   0,  NC,  NC, 135}, 100 },
+  { { NC,  45,  90,  NC,  NC,  NC,  NC,  NC}, 100 },
+  { { NC,  NC,  NC,  NC,  45,  NC,  NC, 180}, 100 },
+  { { NC,  90,   0,  NC,  NC, 180,  45,  NC}, 100 },
+  { { 90,  NC,  NC, 135,  NC,  NC,  NC,  NC}, 100 },
+};
+const Sequence SEQ_WALK_FWD = { WALK_FWD_FRAMES, FRAME_COUNT(WALK_FWD_FRAMES), 0, 1, true, false, false };
 
-  if (!pressingCheck(STATE_FORWARD, frameDelay)) { announced = false; return; }
-  setServoAngle(R3, 135); setServoAngle(L3, 0);
-  if (!pressingCheck(STATE_FORWARD, frameDelay)) { announced = false; return; }
-  setServoAngle(L4, 135); setServoAngle(L2, 90);
-  setServoAngle(R4, 0);   setServoAngle(R1, 180);
-  if (!pressingCheck(STATE_FORWARD, frameDelay)) { announced = false; return; }
-  setServoAngle(R2, 45);  setServoAngle(L1, 90);
-  if (!pressingCheck(STATE_FORWARD, frameDelay)) { announced = false; return; }
-  setServoAngle(R4, 45);  setServoAngle(L4, 180);
-  if (!pressingCheck(STATE_FORWARD, frameDelay)) { announced = false; return; }
-  setServoAngle(R3, 180); setServoAngle(L3, 45);
-  setServoAngle(R2, 90);  setServoAngle(L1, 0);
-  if (!pressingCheck(STATE_FORWARD, frameDelay)) { announced = false; return; }
-  setServoAngle(L2, 135); setServoAngle(R1, 90);
-  if (!pressingCheck(STATE_FORWARD, frameDelay)) { announced = false; return; }
-}
+static const Keyframe WALK_BACK_FRAMES[] = {
+  { { NC,  NC,  NC,  NC,  NC, 135,   0,  NC}, 100 },
+  { { 90,  NC,  NC, 135,   0,  NC,  NC, 135}, 100 },
+  { { NC,  90,   0,  NC,  NC,  NC,  NC,  NC}, 100 },
+  { { NC,  NC,  NC,  NC,  45,  NC,  NC, 180}, 100 },
+  { { NC,  45,  90,  NC,  NC, 180,  45,  NC}, 100 },
+  { {180,  NC,  NC,  90,  NC,  NC,  NC,  NC}, 100 },
+};
+const Sequence SEQ_WALK_BACK = { WALK_BACK_FRAMES, FRAME_COUNT(WALK_BACK_FRAMES), 0, 1, true, false, false };
 
-void runWalkBackward() {
-  static bool announced = false;
-  if (!announced) { Serial.println("WALK BACK"); announced = true; }
-
-  if (!pressingCheck(STATE_BACKWARD, frameDelay)) { announced = false; return; }
-  setServoAngle(R3, 135); setServoAngle(L3, 0);
-  if (!pressingCheck(STATE_BACKWARD, frameDelay)) { announced = false; return; }
-  setServoAngle(L4, 135); setServoAngle(L2, 135);
-  setServoAngle(R4, 0);   setServoAngle(R1, 90);
-  if (!pressingCheck(STATE_BACKWARD, frameDelay)) { announced = false; return; }
-  setServoAngle(R2, 90);  setServoAngle(L1, 0);
-  if (!pressingCheck(STATE_BACKWARD, frameDelay)) { announced = false; return; }
-  setServoAngle(R4, 45);  setServoAngle(L4, 180);
-  if (!pressingCheck(STATE_BACKWARD, frameDelay)) { announced = false; return; }
-  setServoAngle(R3, 180); setServoAngle(L3, 45);
-  setServoAngle(R2, 45);  setServoAngle(L1, 90);
-  if (!pressingCheck(STATE_BACKWARD, frameDelay)) { announced = false; return; }
-  setServoAngle(L2, 90);  setServoAngle(R1, 180);
-  if (!pressingCheck(STATE_BACKWARD, frameDelay)) { announced = false; return; }
-}
-
-void runTurnLeft() {
-  static bool announced = false;
-  if (!announced) { Serial.println("TURN LEFT"); announced = true; }
-
+static const Keyframe TURN_LEFT_FRAMES[] = {
   // Legset 1 (R1 L2)
-  setServoAngle(R3, 135); setServoAngle(L4, 135);
-  if (!pressingCheck(STATE_LEFT, frameDelay)) { announced = false; return; }
-  setServoAngle(R1, 180); setServoAngle(L2, 180);
-  if (!pressingCheck(STATE_LEFT, frameDelay)) { announced = false; return; }
-  setServoAngle(R3, 180); setServoAngle(L4, 180);
-  if (!pressingCheck(STATE_LEFT, frameDelay)) { announced = false; return; }
-  setServoAngle(R1, 135); setServoAngle(L2, 135);
-  if (!pressingCheck(STATE_LEFT, frameDelay)) { announced = false; return; }
-
+  { { NC,  NC,  NC,  NC,  NC, 135,  NC, 135}, 100 },
+  { {180,  NC,  NC, 180,  NC,  NC,  NC,  NC}, 100 },
+  { { NC,  NC,  NC,  NC,  NC, 180,  NC, 180}, 100 },
+  { {135,  NC,  NC, 135,  NC,  NC,  NC,  NC}, 100 },
   // Legset 2 (R2 L1)
-  setServoAngle(R4, 45);  setServoAngle(L3, 45);
-  if (!pressingCheck(STATE_LEFT, frameDelay)) { announced = false; return; }
-  setServoAngle(R2, 90);  setServoAngle(L1, 90);
-  if (!pressingCheck(STATE_LEFT, frameDelay)) { announced = false; return; }
-  setServoAngle(R4, 0);   setServoAngle(L3, 0);
-  if (!pressingCheck(STATE_LEFT, frameDelay)) { announced = false; return; }
-  setServoAngle(R2, 45);  setServoAngle(L1, 45);
-  if (!pressingCheck(STATE_LEFT, frameDelay)) { announced = false; return; }
+  { { NC,  NC,  NC,  NC,  45,  NC,  45,  NC}, 100 },
+  { { NC,  90,  90,  NC,  NC,  NC,  NC,  NC}, 100 },
+  { { NC,  NC,  NC,  NC,   0,  NC,   0,  NC}, 100 },
+  { { NC,  45,  45,  NC,  NC,  NC,  NC,  NC}, 100 },
+};
+const Sequence SEQ_TURN_LEFT = { TURN_LEFT_FRAMES, FRAME_COUNT(TURN_LEFT_FRAMES), 0, 1, true, false, false };
+
+static const Keyframe TURN_RIGHT_FRAMES[] = {
+  // Legset 2 (R2 L1)
+  { { NC,  NC,  NC,  NC,  45,  NC,  45,  NC}, 100 },
+  { { NC,   0,   0,  NC,  NC,  NC,  NC,  NC}, 100 },
+  { { NC,  NC,  NC,  NC,   0,  NC,   0,  NC}, 100 },
+  { { NC,  45,  45,  NC,  NC,  NC,  NC,  NC}, 100 },
+  // Legset 1 (R1 L2)
+  { { NC,  NC,  NC,  NC,  NC, 135,  NC, 135}, 100 },
+  { { 90,  NC,  NC,  90,  NC,  NC,  NC,  NC}, 100 },
+  { { NC,  NC,  NC,  NC,  NC, 180,  NC, 180}, 100 },
+  { {135,  NC,  NC, 135,  NC,  NC,  NC,  NC}, 100 },
+};
+const Sequence SEQ_TURN_RIGHT = { TURN_RIGHT_FRAMES, FRAME_COUNT(TURN_RIGHT_FRAMES), 0, 1, true, false, false };
+
+// ======================================================================
+// STATE → SEQUENCE DISPATCH
+// ======================================================================
+
+struct SequenceEntry {
+  MovementState   state;
+  const Sequence* seq;
+};
+
+static const SequenceEntry SEQUENCE_TABLE[] = {
+  { STATE_STAND,    &SEQ_STAND      },
+  { STATE_REST,     &SEQ_REST       },
+  { STATE_FORWARD,  &SEQ_WALK_FWD   },
+  { STATE_BACKWARD, &SEQ_WALK_BACK  },
+  { STATE_LEFT,     &SEQ_TURN_LEFT  },
+  { STATE_RIGHT,    &SEQ_TURN_RIGHT },
+  { STATE_WAVE,     &SEQ_WAVE       },
+  { STATE_DANCE,    &SEQ_DANCE      },
+  { STATE_SWIM,     &SEQ_SWIM       },
+  { STATE_POINT,    &SEQ_POINT      },
+  { STATE_PUSHUP,   &SEQ_PUSHUP     },
+  { STATE_BOW,      &SEQ_BOW        },
+  { STATE_CUTE,     &SEQ_CUTE       },
+  { STATE_FREAKY,   &SEQ_FREAKY     },
+  { STATE_WORM,     &SEQ_WORM       },
+  { STATE_SHAKE,    &SEQ_SHAKE      },
+  { STATE_SHRUG,    &SEQ_SHRUG      },
+  { STATE_DEAD,     &SEQ_DEAD       },
+  { STATE_CRAB,     &SEQ_CRAB       },
+};
+static const int SEQUENCE_TABLE_SIZE = sizeof(SEQUENCE_TABLE) / sizeof(SEQUENCE_TABLE[0]);
+
+const Sequence* lookupSequence(MovementState state) {
+  for (int i = 0; i < SEQUENCE_TABLE_SIZE; i++) {
+    if (SEQUENCE_TABLE[i].state == state) return SEQUENCE_TABLE[i].seq;
+  }
+  return nullptr;  // STATE_IDLE and anything unmapped
 }
 
-void runTurnRight() {
-  static bool announced = false;
-  if (!announced) { Serial.println("TURN RIGHT"); announced = true; }
+// ======================================================================
+// PLAYBACK ENGINE
+// ======================================================================
 
-  // Legset 2 (R2 L1)
-  setServoAngle(R4, 45);  setServoAngle(L3, 45);
-  if (!pressingCheck(STATE_RIGHT, frameDelay)) { announced = false; return; }
-  setServoAngle(R2, 0);   setServoAngle(L1, 0);
-  if (!pressingCheck(STATE_RIGHT, frameDelay)) { announced = false; return; }
-  setServoAngle(R4, 0);   setServoAngle(L3, 0);
-  if (!pressingCheck(STATE_RIGHT, frameDelay)) { announced = false; return; }
-  setServoAngle(R2, 45);  setServoAngle(L1, 45);
-  if (!pressingCheck(STATE_RIGHT, frameDelay)) { announced = false; return; }
+// Applies one keyframe's targets, skipping NC entries
+static void applyKeyframe(const Keyframe& kf) {
+  for (int i = 0; i < 8; i++) {
+    if (kf.angles[i] != NC) setServoTarget(i, kf.angles[i]);
+  }
+}
 
-  // Legset 1 (R1 L2)
-  setServoAngle(R3, 135); setServoAngle(L4, 135);
-  if (!pressingCheck(STATE_RIGHT, frameDelay)) { announced = false; return; }
-  setServoAngle(R1, 90);  setServoAngle(L2, 90);
-  if (!pressingCheck(STATE_RIGHT, frameDelay)) { announced = false; return; }
-  setServoAngle(R3, 180); setServoAngle(L4, 180);
-  if (!pressingCheck(STATE_RIGHT, frameDelay)) { announced = false; return; }
-  setServoAngle(R1, 135); setServoAngle(L2, 135);
-  if (!pressingCheck(STATE_RIGHT, frameDelay)) { announced = false; return; }
+bool playPose(const Sequence& seq) {
+  // Intro: frames before the loop section, played once
+  for (uint8_t f = 0; f < seq.loopStart; f++) {
+    applyKeyframe(seq.frames[f]);
+    if (!interruptibleDelay(seq.frames[f].durationMs)) return false;
+  }
+  // Loop body: remaining frames, played repeatCount times
+  for (uint8_t r = 0; r < seq.repeatCount; r++) {
+    for (uint8_t f = seq.loopStart; f < seq.frameCount; f++) {
+      applyKeyframe(seq.frames[f]);
+      if (!interruptibleDelay(seq.frames[f].durationMs)) return false;
+    }
+  }
+  // Optional return back to stand position
+  if (seq.standAtEnd) {
+    applyKeyframe(STAND_FRAMES[0]);
+    if (!interruptibleDelay(STAND_FRAMES[0].durationMs)) return false;
+  }
+  return true;
+}
+
+bool playGaitCycle(const Sequence& seq, MovementState holdState) {
+  for (uint8_t f = 0; f < seq.frameCount; f++) {
+    applyKeyframe(seq.frames[f]);
+    if (!pressingCheck(holdState, seq.frames[f].durationMs)) {
+      applyKeyframe(STAND_FRAMES[0]);
+      return false;
+    }
+  }
+  return true;
 }
