@@ -29,7 +29,7 @@ hermit-crab/
 
 - **Firmware** — architecture, controls, and calibration are documented in [`firmware/README.md`](firmware/README.md)
 - **PCB v1** — complete; documented in [`hardware/pcb/v1/README.md`](hardware/pcb/v1/README.md)
-- **PCB v2** — in progress
+- **PCB v2** — in progress; documented in [`hardware/pcb/v2/README.md`](hardware/pcb/v2/README.md)
 
 🎬 **[Watch the video demo of firmware testing](https://youtu.be/UnXPqfklwHU)**
 
