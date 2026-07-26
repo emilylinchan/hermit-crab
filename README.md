@@ -28,6 +28,7 @@ hermit-crab/
 ```
 
 - **Firmware** — architecture, controls, and calibration are documented in [`firmware/README.md`](firmware/README.md)
+- **Hardware** — component selection and power-system design documented in [`hardware/pcb/Hermit_Hardware_Design.pdf`](hardware/pcb/Hermit_Hardware_Design.pdf)
 - **PCB v1** — complete; documented in [`hardware/pcb/v1/README.md`](hardware/pcb/v1/README.md)
 - **PCB v2** — in progress; documented in [`hardware/pcb/v2/README.md`](hardware/pcb/v2/README.md)
 
