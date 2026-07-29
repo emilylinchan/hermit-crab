@@ -25,8 +25,7 @@ The bare board was fabricated by JLCPCB. Components were purchased from Digikey 
 
 | File | Description |
 | --- | --- |
-| `Hermit_V1_Schematic.pdf` | Full schematic |
-| `Hermit_V1_GerberFiles.zip` | Fabrication (Gerber) files |
-| `Hermit_V1_Model.step` | 3D STEP model of the board |
 | `Hermit V1_BOM.xlsx` | Bill of materials |
 | `Hermit_V1_AssembledPCB.heic` | Photo of the assembled board |
+| `Hermit_V1_GerberX2.zip` | Fabrication files |
+| `Hermit_V1_Schematic.pdf` | Full schematic |

@@ -2,7 +2,7 @@
 
 ## Background
 
-Version 1 successfully validated the core power architecture. The ESP32-S3 operated correctly from both USB and battery power, and the 3.3 V rail reliably powered all I2C peripherals. A temporary block-terminal test point inserted in the battery input path also enabled current consumption measurements, which matched the original design expectations. As a result, no functional changes to the power system were required.
+Version 1 successfully validated the core power architecture. The ESP32 was able to be powered from both USB and battery, and the 3.3 V rail reliably powered all I2C peripherals. A temporary block-terminal test point inserted in the battery input path also enabled current consumption measurements, which matched the original design expectations. As a result, no functional changes to the power system were required.
 
 ### Issues with V1
 
