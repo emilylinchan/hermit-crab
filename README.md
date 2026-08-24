@@ -2,6 +2,10 @@
 
 A WiFi-controlled quadruped walking robot built from scratch — custom 3D-printed chassis, PCB, and ESP32 firmware driving 8 servo leg joints with an OLED face. The long-term goal is an autonomous platform with computer-vision-guided motion planning, built up through multiple hardware and firmware iterations.
 
+<p align="center">
+  <img src="hardware/cad/Hermit_Prototype.png" alt="Hermit Crab prototype" width="600">
+</p>
+
 ## Project Structure
 
 ```
