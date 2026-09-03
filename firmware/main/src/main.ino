@@ -4,9 +4,9 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
-#include "movement-sequences.h"
-#include "face-bitmaps.h"
-#include "web.h"
+#include "movement-sequences.hpp"
+#include "face-bitmaps.hpp"
+#include "web.hpp"
 
 // ======================================================================
 // TYPES

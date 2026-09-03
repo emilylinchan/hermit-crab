@@ -1,4 +1,4 @@
-#include "face-bitmaps.h"
+#include "face-bitmaps.hpp"
 
 // Reading the bits left to right, top to bottom, a 1 = white pixel, 0 = black pixel
 // The tool image2cpp converts a PNG into this format automatically
