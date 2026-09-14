@@ -1,4 +1,4 @@
-#include "movement-sequences.h"
+#include "movement-sequences.hpp"
 
 // Derives frameCount from the array itself
 #define FRAME_COUNT(f) ((uint8_t)(sizeof(f) / sizeof(Keyframe)))

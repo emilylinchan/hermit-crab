@@ -9,7 +9,7 @@ Servo servos[8];
 
 // Index:                 0   1   2   3   4    5   6   7
 // Label:                 R1  R2  L1  L2  R4  R3  L3  L4
-const int servoPins[8] = {13, 14, 23, 16, 17, 18, 19, 33};
+const int servoPins[8] = {4, 5, 6, 7, 15, 16, 17, 18};
 
 // MG90D 270deg servo calibration
 const int MIN_PULSE = 833;   // 500  + 333
