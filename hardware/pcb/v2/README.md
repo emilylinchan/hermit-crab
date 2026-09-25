@@ -14,6 +14,7 @@ Version 1 successfully validated the core power architecture. The ESP32 was able
 - Added power indicator LEDs for immediate visual confirmation of each power rail, eliminating the need to probe with a DMM during bring-up.
 - Removed the temporary block-terminal current measurement point used during V1 validation.
 - Optimized component placement and routing to reduce the overall PCB footprint.
+- Moved the ESP32 further inward on the board so the antenna no longer overhangs the PCB as it did in V1, improving mechanical integration and simplifying the CAD enclosure design.
 - Used layer stackup information from our fabricator ([JLC PCB](https://jlcpcb.com/impedance)) and Altium's trace impedance calculator to determine the exact trace width and spacing needed to meet USB impedance requirements.
 
 ## Altium Layouts
